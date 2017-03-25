@@ -5,10 +5,12 @@
 #include <glm/glm.hpp>
 #include <vector>
 
+#include "3DUIPluginAbstractions.h"
+
 #include "QuickShapes.h"
 
 
-class BentoViewSettings {
+class BentoViewSettings : public IBentoViewSettings {
 public:
     // constructor sets defaults
     BentoViewSettings() :
@@ -17,6 +19,12 @@ public:
         showLeadStress(true),
         dataToBento(glm::mat4(1.0)) {}
     
+    bool getShowFlow() { return showFlow; }
+    bool getShowWallStress() { return showWallStress; }
+    bool getShowLeadStress() { return showLeadStress; }
+    glm::mat4 getDataToBentoMat() { return dataToBento; }
+    
+private:
     bool showFlow;
     bool showWallStress;
     bool showLeadStress;
@@ -25,22 +33,10 @@ public:
 
 
 
-// Your volume renderer needs to implement this interface to work with BentoBox
-class IBentoVolumeDrawer {
-public:
-	virtual void preDraw(glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix) {}
-	virtual void drawSubVolume(int instanceID, int timestep, BentoViewSettings viewSettings,
-                               glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix) = 0;
-	virtual void postDraw(glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix) {}
-};
-
-
-
-
 class BentoBoxWidgetRenderer;
 
 
-class BentoBoxWidget {
+class BentoBoxWidget : public IBentoBoxWidget {
 friend BentoBoxWidgetRenderer;
 public:
 
@@ -113,7 +109,7 @@ private:
 
 
 
-class BentoBoxWidgetRenderer {
+class BentoBoxWidgetRenderer : public IBentoBoxWidgetRenderer {
 public:
     BentoBoxWidgetRenderer(BentoBoxWidget *widget, IBentoVolumeDrawer *volDrawer);
     virtual ~BentoBoxWidgetRenderer();

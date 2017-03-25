@@ -1,7 +1,8 @@
 
-#ifndef 3DUIABSTRACTIONS_H
-#define 3DUIABSTRACTIONS_H
+#ifndef UIPLUGINABSTRACTIONS_H
+#define UIPLUGINABSTRACTIONS_H
 
+#include <glm/glm.hpp>
 
 class IBentoViewSettings {
 public:
@@ -16,7 +17,7 @@ public:
 class IBentoVolumeDrawer {
 public:
     virtual void preDraw(glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix) = 0;
-	virtual void drawSubVolume(int instanceID, int timestep, IBentoViewSettings viewSettings,
+	virtual void drawSubVolume(int instanceID, int timestep, IBentoViewSettings *viewSettings,
                                glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix) = 0;
     virtual void postDraw(glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix) = 0;
 };
@@ -34,10 +35,10 @@ class IBentoBoxWidgetRenderer {
 public:
     // Call once per eye.  This draws the entire widget, making calls to the BentoVolumeDrawer
     // passed to the constructor as needed in order to draw all the relevant sub-volumes.
-    void draw(glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix) = 0;
+    virtual void draw(glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix) = 0;
     
     // Draws a white sphere around each subvolume
-    void drawBoundingSpheres(glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix) = 0;
+    virtual void drawBoundingSpheres(glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix) = 0;
 };
 
 

@@ -55,14 +55,14 @@ public:
         // 6. grab depth image
     }
     
-    void drawSubVolume(int instanceID, int timestep, BentoViewSettings viewSettings,
+    void drawSubVolume(int instanceID, int timestep, IBentoViewSettings *viewSettings,
                        glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix) {
         
         // For each sub-volume we want to apply both the modelMatrix and a dataToBento matrix.
         // The modelMatrix is the transform for the whole BentoBoxWidget.
         // viewSettings.dataToBento is where we will store the trans, rot, and scale to
         // apply in order to get to the sub-volume that the user has selected.
-        glm::mat4 M = modelMatrix * viewSettings.dataToBento;
+        glm::mat4 M = modelMatrix * viewSettings->getDataToBentoMat();
         
         
         // Draw the "data" for this instance, timestep, and settings:

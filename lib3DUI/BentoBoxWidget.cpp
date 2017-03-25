@@ -173,11 +173,10 @@ void BentoBoxWidgetRenderer::draw(glm::mat4 modelMatrix, glm::mat4 viewMatrix, g
                 int c = i*_bento->_criticalTimes.size() + t;
                 glm::vec3 ctr = _bento->centerOfBox(r,c);
                 glm::mat4 M = xform * glm::translate(glm::mat4(1.0), ctr) * S;
-                _volDrawer->drawSubVolume(i, t, _bento->_viewSettings[r], M, viewMatrix, projMatrix);
+                _volDrawer->drawSubVolume(i, t, &_bento->_viewSettings[r], M, viewMatrix, projMatrix);
             }
         }
     }
-    
 }
 
     

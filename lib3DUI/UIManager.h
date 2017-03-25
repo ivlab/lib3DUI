@@ -2,13 +2,14 @@
 #define UIMANAGER_H
 
 
+#include "3DUIPluginAbstractions.h"
 #include "UIState.h"
 #include "QuickShapes.h"
 
 
 class UIManagerRenderer;
 
-class UIManager {
+class UIManager : public IUIManager {
 friend UIManagerRenderer;
 public:
     
@@ -67,7 +68,7 @@ private:
 
 
 
-class UIManagerRenderer {
+class UIManagerRenderer : public IUIManagerRenderer {
 public:
     UIManagerRenderer(UIManager *mgr);
     virtual ~UIManagerRenderer();

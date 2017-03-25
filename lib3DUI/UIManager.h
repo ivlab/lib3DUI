@@ -3,9 +3,13 @@
 
 
 #include "UIState.h"
+#include "QuickShapes.h"
 
+
+class UIManagerRenderer;
 
 class UIManager {
+friend UIManagerRenderer;
 public:
     
     enum UI_STATE {
@@ -21,27 +25,21 @@ public:
     
     void setState(UI_STATE newState);
     
-    // Tracker move event called when the brush button is not depressed
+    // Tracker move event
     void rhandTrackerMove(glm::mat4 transform);
     
-    // Called when the brush button is pressed, typically to begin a draw operation
+    // Called when the rhand button is pressed
     void rhandBtnDown();
-    
-    // Tracker move event called when the brush button is depressed
-    void rhandTrackerDrag(glm::mat4 transform);
     
     // Called when the brush button is released.
     void rhandBtnUp();
     
     
-    // Tracker move event called when the hand button is not depressed
+    // Tracker move event
     void lhandTrackerMove(glm::mat4 transform);
     
-    // Called when the hand button is pressed, typically to begin a grab operation
+    // Called when the hand button is pressed
     void lhandBtnDown();
-    
-    // Tracker move event called when the hand button is depressed
-    void lhandTrackerDrag(glm::mat4 transform);
     
     // Called when the hand button is released.
     void lhandBtnUp();
@@ -51,7 +49,26 @@ private:
     UI_STATE  _currentStateID;
     UIState   *_currentState;
     
+    bool _lhandDown;
+    bool _rhandDown;
+    
+    glm::mat4 _lhandMat;
+    glm::mat4 _rhandMat;
 };
+
+
+class UIManagerRenderer {
+public:
+    UIManagerRenderer(UIManager *mgr);
+    virtual ~UIManagerRenderer();
+    
+    void draw(glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix);
+    
+private:
+    UIManager *_mgr;
+    QuickShapes *_quickShapes;
+};
+
 
 #endif
 

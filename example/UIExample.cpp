@@ -95,24 +95,22 @@ YourVolumeRenderer gVolRend;
 
 
 
-UIExample::UIExample(int argc, char** argv) : VRApp(argc, argv),
-    _grabbing(false), _painting(false), _paintingToRoom(glm::mat4(1.0))
-{
+UIExample::UIExample(int argc, char** argv) : VRApp(argc, argv) {
     // Desktop mode
     _rHandTrackerEvents.insert("FakeTracker1_Move");
     _lHandTrackerEvents.insert("FakeTracker2_Move");
-    _paintOnEvents.insert("KbdSpace_Down");
-    _paintOffEvents.insert("KbdSpace_Up");
-    _grabOnEvents.insert("KbdG_Down");
-    _grabOffEvents.insert("KbdG_Up");
+    _rHandDownEvents.insert("KbdSpace_Down");
+    _rHandUpEvents.insert("KbdSpace_Up");
+    _lHandDownEvents.insert("KbdG_Down");
+    _lHandUpEvents.insert("KbdG_Up");
 
     // IV/LAB Cave mode
     _rHandTrackerEvents.insert("RedStylus_Move");
     _lHandTrackerEvents.insert("BlueStylus_Move");
-    _paintOnEvents.insert("RedStylusFrontBtn_Down");
-    _paintOffEvents.insert("RedStylusFrontBtn_Up");
-    _grabOnEvents.insert("BlueStylusFrontBtn_Down");
-    _grabOffEvents.insert("BlueStylusFrontBtn_Up");
+    _rHandDownEvents.insert("RedStylusFrontBtn_Down");
+    _rHandUpEvents.insert("RedStylusFrontBtn_Up");
+    _lHandDownEvents.insert("BlueStylusFrontBtn_Down");
+    _lHandUpEvents.insert("BlueStylusFrontBtn_Up");
 
     // ...
 
@@ -120,6 +118,9 @@ UIExample::UIExample(int argc, char** argv) : VRApp(argc, argv),
     
     _bento = new BentoBoxWidget(9, 0, 400, glm::mat4(1.0), 3.0, 2.0);
     _bentoRend = new BentoBoxWidgetRenderer(_bento, &gVolRend);
+    
+    _uiMgr = new UIManager();
+    _uiMgrRend = new UIManagerRenderer(_uiMgr);
 }
 
 UIExample::~UIExample()
@@ -134,58 +135,24 @@ void UIExample::onVREvent(const VREvent &event)
     event.print();
     
     
-    if (_paintOnEvents.find(event.getName()) != _paintOnEvents.end()) {
-        _painting = true;
+    if (_rHandDownEvents.find(event.getName()) != _rHandDownEvents.end()) {
+        _uiMgr->rhandBtnDown();
     }
-    else if (_paintOffEvents.find(event.getName()) != _paintOffEvents.end()) {
-        _painting = false;
+    else if (_rHandUpEvents.find(event.getName()) != _rHandUpEvents.end()) {
+        _uiMgr->rhandBtnUp();
     }
-    else if (_grabOnEvents.find(event.getName()) != _grabOnEvents.end()) {
-        _grabbing = true;
+    else if (_lHandDownEvents.find(event.getName()) != _lHandDownEvents.end()) {
+        _uiMgr->lhandBtnDown();
     }
-    else if (_grabOffEvents.find(event.getName()) != _grabOffEvents.end()) {
-        _grabbing = false;
+    else if (_lHandUpEvents.find(event.getName()) != _lHandUpEvents.end()) {
+        _uiMgr->lhandBtnUp();
     }
     else if (_rHandTrackerEvents.find(event.getName()) != _rHandTrackerEvents.end()) {
-        _rhand = glm::make_mat4(event.getDataAsFloatArray("Transform"));
-        if (_painting) {
-            // Transform the right hand transform into "painting space"
-            glm::mat4 roomToPainting = glm::inverse(_paintingToRoom);
-            glm::mat4 handInPaintingSpace = roomToPainting * _rhand;
-            
-            // Create a new blob to add to the painting
-            PaintBlob pb;
-            // set the blob's transform based on the current hand transform
-            pb.trans = handInPaintingSpace;
-            // jitter the blob's position a bit so that blobs appear to come out
-            // of the brush at a random location along the brush's bristles.
-            float jitter = 0.5*((GLfloat)rand()/(GLfloat)RAND_MAX) - 0.25;
-            pb.trans[3].x += jitter * pb.trans[0].x;
-            pb.trans[3].y += jitter * pb.trans[0].y;
-            pb.trans[3].z += jitter * pb.trans[0].z;
-            
-            // give the blob a random radius
-            pb.rad = 0.01 + 0.1*((GLfloat)rand()/(GLfloat)RAND_MAX);
-            
-            // assign a color based on the position of the brush within the room
-            float tmp;
-            pb.color[0] = std::modf(_rhand[3].x, &tmp);
-            pb.color[1] = std::modf(_rhand[3].y, &tmp);
-            pb.color[2] = std::modf(_rhand[3].z, &tmp);
-            
-            _paintBlobs.push_back(pb);
-        }
+        _uiMgr->rhandTrackerMove(glm::make_mat4(event.getDataAsFloatArray("Transform")));
     }
     else if (_lHandTrackerEvents.find(event.getName()) != _lHandTrackerEvents.end()) {
-        glm::mat4 newHand = glm::make_mat4(event.getDataAsFloatArray("Transform"));
-        if (_grabbing) {
-            // Update the paintingToRoom transform based upon the new transform
-            // of the left hand relative to the last frame.
-            _paintingToRoom = newHand * glm::inverse(_lhand) * _paintingToRoom;
-        }
-        _lhand = newHand;
+        _uiMgr->lhandTrackerMove(glm::make_mat4(event.getDataAsFloatArray("Transform")));
     }
-    
     
     else if (event.getName() == "FrameStart") {
         float t = event.getDataAsFloat("ElapsedSeconds");
@@ -210,30 +177,12 @@ void UIExample::onVRRenderGraphicsContext(const VRGraphicsState &renderState) {
 
 void UIExample::onVRRenderGraphics(const VRGraphicsState &renderState) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
-    
-    // Draw a cursor for the left hand
-    const GLfloat lcolor [] = {0.8, 0.5, 0.5};
-    glm::mat4 scaleHandCursor = glm::mat4(1.0);
-    scaleHandCursor[0].x = 0.25;
-    scaleHandCursor[1].y = 0.25;
-    scaleHandCursor[2].z = 0.25;
-    glm::mat4 lHandScaled = _lhand * scaleHandCursor;
-    QS.drawCube(glm::value_ptr(lHandScaled), renderState.getViewMatrix(), renderState.getProjectionMatrix(), lcolor);
-    
-    // Draw a cursor for the right hand
-    const float rcolor [] = {0.5, 0.5, 0.8};
-    QS.drawBrush(glm::value_ptr(_rhand), renderState.getViewMatrix(), renderState.getProjectionMatrix(), rcolor);
-    
-    // Draw the "painting"
-    for (int i=0; i<_paintBlobs.size(); i++) {
-        glm::mat4 S = glm::mat4(1.0);
-        S[0].x = _paintBlobs[i].rad;;
-        S[1].y = _paintBlobs[i].rad;;
-        S[2].z = _paintBlobs[i].rad;;
-        glm::mat4 M = _paintingToRoom * _paintBlobs[i].trans * S;
-        QS.drawSphere(glm::value_ptr(M), renderState.getViewMatrix(), renderState.getProjectionMatrix(), _paintBlobs[i].color);
-    }
-    
-    _bentoRend->draw(glm::rotate(glm::mat4(1.0), 1.57f, glm::vec3(1,0,0)), glm::make_mat4(renderState.getViewMatrix()),
+
+    _uiMgrRend->draw(glm::mat4(1.0),
+                     glm::make_mat4(renderState.getViewMatrix()),
+                     glm::make_mat4(renderState.getProjectionMatrix()));
+
+    _bentoRend->draw(glm::rotate(glm::mat4(1.0), 1.57f, glm::vec3(1,0,0)),
+                     glm::make_mat4(renderState.getViewMatrix()),
                      glm::make_mat4(renderState.getProjectionMatrix()));
 }

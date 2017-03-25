@@ -26,18 +26,10 @@ using namespace MinVR;
 #include <set>
 
 #include "BentoBoxWidget.h"
+#include "UIManager.h"
 
 
-/** This example program is meant to illustrate how to create a MinVR program
-    that includes an interesting 3D user interface.  Here, the user interface
-    assumes that each hand holds a 6 DOF tracker with one button on it.  A
-    3D cursor follows each hand -- the right hand cursor is a paintbrush, and
-    the left hand is a cube.  When the right hand button is pressed and held
-    then the brush begins to paint a trail of multi-colored spherical "3D paint
-    blobs".  When the left hand button is pressed and held, this "grabs onto"
-    the entire 3D painting so that the user can then translate and rotate
-    the scene.  The interface is a super-simplified version of the CavePainting
-    tool (Keefe et al., 2001) and recently seen in TiltBrush and similar tools.
+/** 
  */
 class UIExample : public VRApp {
 public:
@@ -68,35 +60,18 @@ private:
     // modes, such as in a Cave, Vive, Oculus, zSpace, desktop.
     std::set< std::string > _rHandTrackerEvents;
     std::set< std::string > _lHandTrackerEvents;
-    std::set< std::string > _paintOnEvents;
-    std::set< std::string > _paintOffEvents;
-    std::set< std::string > _grabOnEvents;
-    std::set< std::string > _grabOffEvents;
+    std::set< std::string > _lHandDownEvents;
+    std::set< std::string > _lHandUpEvents;
+    std::set< std::string > _rHandDownEvents;
+    std::set< std::string > _rHandUpEvents;
     
-    // Transformation matrices for the left hand and right hand
-    glm::mat4 _lhand;
-    glm::mat4 _rhand;
-
-    // UI state:  Painting is true when the right hand button is held down,
-    // Grabbing is true when the left hand button is held down.
-    bool _grabbing;
-    bool _painting;
-
-    // Transforms paint blobs to "room" space (the fixed physical space of
-    // the room as defined by the coordinate system of the VR trackers).
-    glm::mat4 _paintingToRoom;
-
-    class PaintBlob {
-    public:
-        glm::mat4 trans;
-        float rad;
-        float color[3];
-    };
-    std::vector<PaintBlob> _paintBlobs;
     
     BentoBoxWidget *_bento;
     BentoBoxWidgetRenderer *_bentoRend;
 
+    UIManager *_uiMgr;
+    UIManagerRenderer *_uiMgrRend;
+    
 };
 
 

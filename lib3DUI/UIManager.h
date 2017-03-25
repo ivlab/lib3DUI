@@ -19,6 +19,12 @@ public:
     };
     
     
+    enum CURSOR_TYPE {
+        CURSOR_LASER = 0,
+        CURSOR_SPHERE = 1,
+        CURSOR_CUBE = 2
+    };
+    
     UIManager();
     virtual ~UIManager();
     
@@ -49,12 +55,16 @@ private:
     UI_STATE  _currentStateID;
     UIState   *_currentState;
     
+    CURSOR_TYPE _lhandCursorType;
+    CURSOR_TYPE _rhandCursorType;
+    
     bool _lhandDown;
     bool _rhandDown;
     
     glm::mat4 _lhandMat;
     glm::mat4 _rhandMat;
 };
+
 
 
 class UIManagerRenderer {

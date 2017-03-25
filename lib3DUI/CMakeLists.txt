@@ -10,6 +10,7 @@ set(source_files
 )
 
 set(header_files
+  3DUIPluginAbstractions.h
   BentoBoxWidget.h
   QuickShapes.h
   UIManager.h

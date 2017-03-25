@@ -63,5 +63,8 @@ endif (NOT ${glm_FOUND})
 # ---- This Project Has Two Subdirs ----
 
 add_subdirectory(lib3DUI)
-add_subdirectory(example)
 
+option(BUILD_EXAMPLES "If enabled, examples will be built" ON)
+if (BUILD_EXAMPLES)
+  add_subdirectory(example)
+endif()

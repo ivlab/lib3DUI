@@ -35,6 +35,7 @@ set_source_files_properties(${extra_files} PROPERTIES HEADER_FILE_ONLY TRUE)
 include_directories(
 	${OPENGL_INCLUDE_DIR}
   ${glm_INCLUDE_DIR}
+  ${GLM_INCLUDE_DIRS}
 )
 
 #---------------------- Create Lib ----------------------

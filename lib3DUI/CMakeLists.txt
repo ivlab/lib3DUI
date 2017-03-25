@@ -5,20 +5,15 @@ project(3DUI)
 
 set(source_files
   BentoBoxWidget.cpp
-#  GrabbingState.cpp
-#  InkingState.cpp
   QuickShapes.cpp
-#  StartState.cpp
+  UIManager.cpp
 )
 
 set(header_files
-#  3DUI.h
-#  3DUIState.h
   BentoBoxWidget.h
-#  GrabbingState.h
-#  InkingState.h
   QuickShapes.h
-#  StartState.h
+  UIManager.h
+  UIState.h
 )
 
 set(extra_files

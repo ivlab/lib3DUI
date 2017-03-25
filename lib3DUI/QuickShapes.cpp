@@ -28,31 +28,6 @@
 #include <glm/gtc/type_ptr.hpp>
 
 
-
-float QuickShapes::s_lightPos[3]  = {0.0, 10.0, 0.0};
-float QuickShapes::s_lightAmb[3]  = {0.2, 0.2, 0.2};
-float QuickShapes::s_lightDiff[3] = {0.7, 0.7, 0.7};
-float QuickShapes::s_lightSpec[3] = {0.6, 0.6, 0.6};
-float QuickShapes::s_matSpec[3]   = {0.6, 0.6, 0.6};
-float QuickShapes::s_matShin      = 10.0;
-
-GLuint QuickShapes::s_cubeVAO = 0;
-GLuint QuickShapes::s_cubeVBO = 0;
-
-GLuint QuickShapes::s_cylVAO = 0;
-GLuint QuickShapes::s_cylVBO = 0;
-int QuickShapes::s_cylNVerts = 0;
-
-GLuint QuickShapes::s_sphVAO = 0;
-GLuint QuickShapes::s_sphVBO = 0;
-int QuickShapes::s_sphNVerts = 0;
-
-GLuint QuickShapes::s_brushVAO = 0;
-GLuint QuickShapes::s_brushVBO = 0;
-
-GLuint QuickShapes::s_cubbieVAO = 0;
-GLuint QuickShapes::s_cubbieVBO = 0;
-
 #define PI 3.14159265359
 #define TWOPI 6.28318530718
 
@@ -280,8 +255,6 @@ void ShaderUtils::deleteSimpleShaders() {
 
 
 
-
-
 // Helper datastructure for building shapes algorithmically
 class Vertex {
 public:
@@ -297,6 +270,51 @@ public:
 };
 
 
+QuickShapes::QuickShapes() {
+    s_lightPos[0] = 0.0;
+    s_lightPos[1] = 10.0;
+    s_lightPos[2] = 0.0;
+    
+    s_lightAmb[0] = 0.2;
+    s_lightAmb[1] = 0.2;
+    s_lightAmb[2] = 0.2;
+    
+    s_lightDiff[0] = 0.7;
+    s_lightDiff[1] = 0.7;
+    s_lightDiff[2] = 0.7;
+    
+    s_lightSpec[0] = 0.6;
+    s_lightSpec[1] = 0.6;
+    s_lightSpec[2] = 0.6;
+    
+    s_matSpec[0] = 0.6;
+    s_matSpec[1] = 0.6;
+    s_matSpec[2] = 0.6;
+    
+    s_matShin = 10.0;
+
+    s_cubeVAO = 0;
+    s_cubeVBO = 0;
+
+    s_cylVAO = 0;
+    s_cylVBO = 0;
+    s_cylNVerts = 0;
+
+    s_sphVAO = 0;
+    s_sphVBO = 0;
+    s_sphNVerts = 0;
+
+    s_brushVAO = 0;
+    s_brushVBO = 0;
+
+    s_cubbieVAO = 0;
+    s_cubbieVBO = 0;
+}
+
+
+QuickShapes::~QuickShapes() {
+    freeGPUMemory();
+}
 
 
 

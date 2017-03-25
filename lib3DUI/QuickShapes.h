@@ -33,7 +33,7 @@
 #endif
 
 
-/** This static class provides a quick way to draw shapes for use in debugging or
+/** This class provides a quick way to draw shapes for use in debugging or
     as cursors for VR input devices etc. using the GLSL pipeline.  You can specify
     the color for each shape as part of the rendering call.  Other lighting
     parameters (the intensity of the light, advanced material properties) are 
@@ -44,19 +44,23 @@
  */
 class QuickShapes {
 public:
+    
+    QuickShapes();
+    virtual ~QuickShapes();
+    
 
 	/** Draws a cube with extents -1 to 1 given the model, view, and projection 
         matrices provided and using the supplied color as a material property.
 	 */
-	static void drawCube(const float *modelMatrix, const float *viewMatrix,
-                         const float *projectionMatrix, const float *color);
+	void drawCube(const float *modelMatrix, const float *viewMatrix,
+                  const float *projectionMatrix, const float *color);
 
 
     /** Draws a cylinder with radius 1 and height y=-1 to 1 given the model, 
         view, and projection matrices provided and using the supplied color as a
         material property.
      */
-    static void drawCylinder(const float *modelMatrix, const float *viewMatrix,
+    void drawCylinder(const float *modelMatrix, const float *viewMatrix,
                              const float *projectionMatrix, const float *color);
 
     
@@ -64,7 +68,7 @@ public:
      view, and projection matrices provided and using the supplied color as a
      material property.
      */
-    static void drawSphere(const float *modelMatrix, const float *viewMatrix,
+    void drawSphere(const float *modelMatrix, const float *viewMatrix,
                            const float *projectionMatrix, const float *color);
     
     
@@ -72,75 +76,73 @@ public:
         CavePainting paper. The tip of the brush is at (0,0,0), the front
         flat edge runs along the X axis, and the handle runs in the +Z direction.
      */
-    static void drawBrush(const float *modelMatrix, const float *viewMatrix,
+    void drawBrush(const float *modelMatrix, const float *viewMatrix,
                           const float *projectionMatrix, const float *color);
     
     
     /** Draws a cubbie with extents -1 to 1 given the model, view, and projection
      matrices provided and using the supplied color as a material property.
      */
-    static void drawCubbie(const float *modelMatrix, const float *viewMatrix,
+    void drawCubbie(const float *modelMatrix, const float *viewMatrix,
                            const float *projectionMatrix, const float *color);
     
-	/** Call on program shutdown to free vertex arrays stored on the GPU. */
-	static void freeGPUMemory();
 
-
-
-	static void setLightPos(const float *pos) {
+	void setLightPos(const float *pos) {
 		s_lightPos[0] = pos[0];  s_lightPos[1] = pos[1]; s_lightPos[2] = pos[2];
 	}
 
-	static void setLightIntensityAmbient(const float *i) {
+	void setLightIntensityAmbient(const float *i) {
 		s_lightAmb[0] = i[0];  s_lightAmb[1] = i[1]; s_lightAmb[2] = i[2];
 	}
 
-	static void setLightIntensityDiffuse(const float *i) {
+	void setLightIntensityDiffuse(const float *i) {
 		s_lightDiff[0] = i[0];  s_lightDiff[1] = i[1]; s_lightDiff[2] = i[2];
 	}
 
-	static void setLightIntensitySpecular(const float *i) {
+	void setLightIntensitySpecular(const float *i) {
 		s_lightSpec[0] = i[0];  s_lightSpec[1] = i[1]; s_lightSpec[2] = i[2];
 	}
 
-	static void setMaterialReflectanceSpecular(const float *r) {
+	void setMaterialReflectanceSpecular(const float *r) {
 		s_matSpec[0] = r[0];  s_matSpec[1] = r[1]; s_matSpec[2] = r[2];
 	}
 
-	static void setMaterialReflectanceShinniness(float s) {
+	void setMaterialReflectanceShinniness(float s) {
 		s_matShin = s;
 	}
 
 private:
 
-	static void initCube();
-	static GLuint s_cubeVAO;
-	static GLuint s_cubeVBO;
+    void freeGPUMemory();
+    
+	void initCube();
+	GLuint s_cubeVAO;
+	GLuint s_cubeVBO;
 
-    static void initCyl();
-    static GLuint s_cylVAO;
-    static GLuint s_cylVBO;
-    static int s_cylNVerts;
+    void initCyl();
+    GLuint s_cylVAO;
+    GLuint s_cylVBO;
+    int s_cylNVerts;
     
-    static void initSph();
-    static GLuint s_sphVAO;
-    static GLuint s_sphVBO;
-    static int s_sphNVerts;
+    void initSph();
+    GLuint s_sphVAO;
+    GLuint s_sphVBO;
+    int s_sphNVerts;
     
-    static void initBrush();
-    static GLuint s_brushVAO;
-    static GLuint s_brushVBO;
+    void initBrush();
+    GLuint s_brushVAO;
+    GLuint s_brushVBO;
 
-    static void initCubbie();
-    static GLuint s_cubbieVAO;
-    static GLuint s_cubbieVBO;
+    void initCubbie();
+    GLuint s_cubbieVAO;
+    GLuint s_cubbieVBO;
     
-	static float s_lightPos[3];
-	static float s_lightAmb[3];
-	static float s_lightDiff[3];
-	static float s_lightSpec[3];
-	static float s_matSpec[3];
-	static float s_matShin;
+	float s_lightPos[3];
+	float s_lightAmb[3];
+	float s_lightDiff[3];
+	float s_lightSpec[3];
+	float s_matSpec[3];
+	float s_matShin;
 };
 
 #endif

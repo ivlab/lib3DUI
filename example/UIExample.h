@@ -95,6 +95,8 @@ private:
     std::vector<PaintBlob> _paintBlobs;
     
     BentoBoxWidget *_bento;
+    BentoBoxWidgetRenderer *_bentoRend;
+
 };
 
 

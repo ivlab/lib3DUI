@@ -38,7 +38,7 @@
 #include <cmath>
 
 
-
+QuickShapes QS;
 
 
 /// This is a standin for Seth and Dan's Rendering Code, which should work
@@ -71,13 +71,13 @@ public:
         S[1].y = 0.2;
         S[2].z = 0.2;
         float col1[3] = {1.0, 0.7, 0.8};
-        QuickShapes::drawCube(glm::value_ptr(M * glm::translate(glm::mat4(1.0), glm::vec3(-0.3,0,0)) * S),
+        QS.drawCube(glm::value_ptr(M * glm::translate(glm::mat4(1.0), glm::vec3(-0.3,0,0)) * S),
                               glm::value_ptr(viewMatrix), glm::value_ptr(projMatrix), col1);
         float col2[3] = {0.0, 0.3, 0.8};
-        QuickShapes::drawSphere(glm::value_ptr(M * glm::translate(glm::mat4(1.0), glm::vec3(-0.1,0.2,0)) * S),
+        QS.drawSphere(glm::value_ptr(M * glm::translate(glm::mat4(1.0), glm::vec3(-0.1,0.2,0)) * S),
                               glm::value_ptr(viewMatrix), glm::value_ptr(projMatrix), col2);
         float col3[3] = {0.3, 0.5, 0.3};
-        QuickShapes::drawCylinder(glm::value_ptr(M * glm::translate(glm::mat4(1.0), glm::vec3(0.1,-0.1,0.1)) * S),
+        QS.drawCylinder(glm::value_ptr(M * glm::translate(glm::mat4(1.0), glm::vec3(0.1,-0.1,0.1)) * S),
                               glm::value_ptr(viewMatrix), glm::value_ptr(projMatrix), col3);
     }
     
@@ -119,11 +119,11 @@ UIExample::UIExample(int argc, char** argv) : VRApp(argc, argv),
     
     
     _bento = new BentoBoxWidget(9, 0, 400, &gVolRend, glm::mat4(1.0), 3.0, 2.0);
+    _bentoRend = new BentoBoxWidgetRenderer(_bento);
 }
 
 UIExample::~UIExample()
 {
-    QuickShapes::freeGPUMemory();
 }
 
 
@@ -218,11 +218,11 @@ void UIExample::onVRRenderGraphics(const VRGraphicsState &renderState) {
     scaleHandCursor[1].y = 0.25;
     scaleHandCursor[2].z = 0.25;
     glm::mat4 lHandScaled = _lhand * scaleHandCursor;
-    QuickShapes::drawCube(glm::value_ptr(lHandScaled), renderState.getViewMatrix(), renderState.getProjectionMatrix(), lcolor);
+    QS.drawCube(glm::value_ptr(lHandScaled), renderState.getViewMatrix(), renderState.getProjectionMatrix(), lcolor);
     
     // Draw a cursor for the right hand
     const float rcolor [] = {0.5, 0.5, 0.8};
-    QuickShapes::drawBrush(glm::value_ptr(_rhand), renderState.getViewMatrix(), renderState.getProjectionMatrix(), rcolor);
+    QS.drawBrush(glm::value_ptr(_rhand), renderState.getViewMatrix(), renderState.getProjectionMatrix(), rcolor);
     
     // Draw the "painting"
     for (int i=0; i<_paintBlobs.size(); i++) {
@@ -231,8 +231,9 @@ void UIExample::onVRRenderGraphics(const VRGraphicsState &renderState) {
         S[1].y = _paintBlobs[i].rad;;
         S[2].z = _paintBlobs[i].rad;;
         glm::mat4 M = _paintingToRoom * _paintBlobs[i].trans * S;
-        QuickShapes::drawSphere(glm::value_ptr(M), renderState.getViewMatrix(), renderState.getProjectionMatrix(), _paintBlobs[i].color);
+        QS.drawSphere(glm::value_ptr(M), renderState.getViewMatrix(), renderState.getProjectionMatrix(), _paintBlobs[i].color);
     }
     
-    _bento->draw(glm::rotate(glm::mat4(1.0), 1.57f, glm::vec3(1,0,0)), glm::make_mat4(renderState.getViewMatrix()), glm::make_mat4(renderState.getProjectionMatrix()));
+    _bentoRend->draw(glm::rotate(glm::mat4(1.0), 1.57f, glm::vec3(1,0,0)), glm::make_mat4(renderState.getViewMatrix()),
+                     glm::make_mat4(renderState.getProjectionMatrix()));
 }

@@ -91,73 +91,6 @@ glm::vec3 BentoBoxWidget::centerOfBox(int r, int c) {
 }
 
 
-void BentoBoxWidget::draw(glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix) {
-    
-    glm::mat4 xform = modelMatrix * _scaleMat * _transMat;
-    
-    // Draw cubbies
-    float col[3] = {1.0, 1.0, 1.0};
-    glm::mat4 S = glm::mat4(1.0);
-    S[0].x = 0.5;
-    S[1].y = 0.125;
-    S[2].z = 0.5;
-    
-    int nrows = _viewSettings.size();
-    int ncols = _numInstances * _criticalTimes.size();
-    
-    for (int r = 0; r < nrows; r++) {
-        for (int c = 0; c < ncols; c++) {
-            glm::vec3 ctr = centerOfBox(r,c);
-            ctr.y = -0.35;
-            glm::mat4 M = xform * glm::translate(glm::mat4(1.0), ctr) * S;
-            QuickShapes::drawCubbie(glm::value_ptr(M), glm::value_ptr(viewMatrix), glm::value_ptr(projMatrix), col);
-        }
-    }
-    
-    // Draw sub-volumes in cubbies
-    // Scale down just a tad to leave a gap between cubbies since each cubbie is exactly a 1 unit square
-    S[0].x = 0.9;
-    S[1].y = 0.9;
-    S[2].z = 0.9;
-    for (int r = 0; r < nrows; r++) {
-        for (int i = 0; i < _numInstances; i++) {
-            for (int t = 0; t < _criticalTimes.size(); t++) {
-                int c = i*_criticalTimes.size() + t;
-                glm::vec3 ctr = centerOfBox(r,c);
-                glm::mat4 M = xform * glm::translate(glm::mat4(1.0), ctr) * S;
-                _volDrawer->drawSubVolume(i, t, _viewSettings[r], M, viewMatrix, projMatrix);
-            }
-        }
-    }
-    
-}
-
-
-void BentoBoxWidget::drawBoundingSpheres(glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix) {
-    float col[3] = {1.0, 1.0, 1.0};
-    glm::mat4 S = glm::mat4(1.0);
-    S[0].x = 0.9;
-    S[1].y = 0.9;
-    S[2].z = 0.9;
-    int nrows = _viewSettings.size();
-    int ncols = _numInstances * _criticalTimes.size();
-    for (int r = 0; r < nrows; r++) {
-        for (int c = 0; c < ncols; c++) {
-            glm::vec3 ctr = centerOfBox(r,c);
-            glm::mat4 M = modelMatrix * glm::translate(glm::mat4(1.0), ctr) * S;
-            // scale because sphere is radius = 2.0
-            glm::mat4 S2 = glm::mat4(1.0);
-            S2[0].x = 0.5;
-            S2[1].y = 0.5;
-            S2[2].z = 0.5;
-            QuickShapes::drawSphere(glm::value_ptr(M * S2), glm::value_ptr(viewMatrix),
-                                    glm::value_ptr(projMatrix), col);
-        }
-    }
-    
-}
-
-
 
 void BentoBoxWidget::transitionToDefaultView() {
     int nrows = _viewSettings.size();
@@ -187,6 +120,87 @@ void BentoBoxWidget::transitionToView(int minRow, int minCol, int maxRow, int ma
     
     _transition = new Transition(_lastSysTime, _scaleMat[0].x, glm::vec3(_transMat[3]),
                                  _lastSysTime + 1.5, newScale, newTrans);
+    
+}
+
+
+
+
+// -----------------------  Renderer Friend Class ---------------------------
+
+
+BentoBoxWidgetRenderer::BentoBoxWidgetRenderer(BentoBoxWidget *widget) : _bento(widget) {
+    _quickShapes = new QuickShapes();
+}
+
+BentoBoxWidgetRenderer::~BentoBoxWidgetRenderer() {
+    delete _quickShapes;
+}
+
+
+void BentoBoxWidgetRenderer::draw(glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix) {
+    
+    glm::mat4 xform = modelMatrix * _bento->_scaleMat * _bento->_transMat;
+    
+    // Draw cubbies
+    float col[3] = {1.0, 1.0, 1.0};
+    glm::mat4 S = glm::mat4(1.0);
+    S[0].x = 0.5;
+    S[1].y = 0.125;
+    S[2].z = 0.5;
+    
+    int nrows = _bento->_viewSettings.size();
+    int ncols = _bento->_numInstances * _bento->_criticalTimes.size();
+    
+    for (int r = 0; r < nrows; r++) {
+        for (int c = 0; c < ncols; c++) {
+            glm::vec3 ctr = _bento->centerOfBox(r,c);
+            ctr.y = -0.35;
+            glm::mat4 M = xform * glm::translate(glm::mat4(1.0), ctr) * S;
+            _quickShapes->drawCubbie(glm::value_ptr(M), glm::value_ptr(viewMatrix), glm::value_ptr(projMatrix), col);
+        }
+    }
+    
+    // Draw sub-volumes in cubbies
+    // Scale down just a tad to leave a gap between cubbies since each cubbie is exactly a 1 unit square
+    S[0].x = 0.9;
+    S[1].y = 0.9;
+    S[2].z = 0.9;
+    for (int r = 0; r < nrows; r++) {
+        for (int i = 0; i < _bento->_numInstances; i++) {
+            for (int t = 0; t < _bento->_criticalTimes.size(); t++) {
+                int c = i*_bento->_criticalTimes.size() + t;
+                glm::vec3 ctr = _bento->centerOfBox(r,c);
+                glm::mat4 M = xform * glm::translate(glm::mat4(1.0), ctr) * S;
+                _bento->_volDrawer->drawSubVolume(i, t, _bento->_viewSettings[r], M, viewMatrix, projMatrix);
+            }
+        }
+    }
+    
+}
+
+    
+void BentoBoxWidgetRenderer::drawBoundingSpheres(glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix) {
+    float col[3] = {1.0, 1.0, 1.0};
+    glm::mat4 S = glm::mat4(1.0);
+    S[0].x = 0.9;
+    S[1].y = 0.9;
+    S[2].z = 0.9;
+    int nrows = _bento->_viewSettings.size();
+    int ncols = _bento->_numInstances * _bento->_criticalTimes.size();
+    for (int r = 0; r < nrows; r++) {
+        for (int c = 0; c < ncols; c++) {
+            glm::vec3 ctr = _bento->centerOfBox(r,c);
+            glm::mat4 M = modelMatrix * glm::translate(glm::mat4(1.0), ctr) * S;
+            // scale because sphere is radius = 2.0
+            glm::mat4 S2 = glm::mat4(1.0);
+            S2[0].x = 0.5;
+            S2[1].y = 0.5;
+            S2[2].z = 0.5;
+            _quickShapes->drawSphere(glm::value_ptr(M * S2), glm::value_ptr(viewMatrix),
+                                     glm::value_ptr(projMatrix), col);
+        }
+    }
     
 }
 

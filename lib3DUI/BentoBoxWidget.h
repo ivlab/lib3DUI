@@ -5,6 +5,8 @@
 #include <glm/glm.hpp>
 #include <vector>
 
+#include "QuickShapes.h"
+
 
 class BentoViewSettings {
 public:
@@ -35,8 +37,11 @@ public:
 
 
 
+class BentoBoxWidgetRenderer;
+
 
 class BentoBoxWidget {
+friend BentoBoxWidgetRenderer;
 public:
 
   // Creates a new widget with columns for numInstances data instances of time-varying data.
@@ -53,14 +58,6 @@ public:
   // Call once per frame.  This advances any active animations.  Pass the synchronized system time
   // from MinVR in here.
   void animate(float currentSysTime);
-
-
-  // Call once per eye.  This draws the entire widget, making calls to the BentoVolumeDrawer 
-  // passed to the constructor as needed in order to draw all the relevant sub-volumes.
-  void draw(glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix);
-
-  // Draws a white sphere around each subvolume
-  void drawBoundingSpheres(glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix);
 
 
   // Starts an animated transition from the current view to the default view where the whole
@@ -114,6 +111,29 @@ private:
     Transition *_transition;
     float _lastSysTime;
 };
+
+
+
+class BentoBoxWidgetRenderer {
+public:
+    BentoBoxWidgetRenderer(BentoBoxWidget *widget);
+    virtual ~BentoBoxWidgetRenderer();
+    
+    // Call once per eye.  This draws the entire widget, making calls to the BentoVolumeDrawer
+    // passed to the constructor as needed in order to draw all the relevant sub-volumes.
+    void draw(glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix);
+    
+    // Draws a white sphere around each subvolume
+    void drawBoundingSpheres(glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix);
+    
+    
+private:
+    BentoBoxWidget *_bento;
+    QuickShapes *_quickShapes;
+    
+};
+
+
 
 
 #endif

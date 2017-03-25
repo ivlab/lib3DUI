@@ -10,12 +10,11 @@
 
 
 BentoBoxWidget::BentoBoxWidget(int numInstances, int minTimestep, int maxTimestep,
-                               IBentoVolumeDrawer *volDrawer, glm::mat4 bentoToWorld,
+                               glm::mat4 bentoToWorld,
                                float maxViewWidth, float maxViewHeight) :
     _numInstances(numInstances),
     _minTimestep(minTimestep),
     _maxTimestep(maxTimestep),
-    _volDrawer(volDrawer),
     _toWorld(bentoToWorld),
     _maxViewWidth(maxViewWidth),
     _maxViewHeight(maxViewHeight),
@@ -129,7 +128,9 @@ void BentoBoxWidget::transitionToView(int minRow, int minCol, int maxRow, int ma
 // -----------------------  Renderer Friend Class ---------------------------
 
 
-BentoBoxWidgetRenderer::BentoBoxWidgetRenderer(BentoBoxWidget *widget) : _bento(widget) {
+BentoBoxWidgetRenderer::BentoBoxWidgetRenderer(BentoBoxWidget *widget, IBentoVolumeDrawer *volDrawer) :
+    _bento(widget), _volDrawer(volDrawer)
+{
     _quickShapes = new QuickShapes();
 }
 
@@ -172,7 +173,7 @@ void BentoBoxWidgetRenderer::draw(glm::mat4 modelMatrix, glm::mat4 viewMatrix, g
                 int c = i*_bento->_criticalTimes.size() + t;
                 glm::vec3 ctr = _bento->centerOfBox(r,c);
                 glm::mat4 M = xform * glm::translate(glm::mat4(1.0), ctr) * S;
-                _bento->_volDrawer->drawSubVolume(i, t, _bento->_viewSettings[r], M, viewMatrix, projMatrix);
+                _volDrawer->drawSubVolume(i, t, _bento->_viewSettings[r], M, viewMatrix, projMatrix);
             }
         }
     }

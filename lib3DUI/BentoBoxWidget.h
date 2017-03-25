@@ -49,7 +49,7 @@ public:
   // drawing interface is used to keep the widget generic -- anything rendering technique
   // that implements this interface may be used to display the subvolumes.  
   BentoBoxWidget(int numInstances, int minTimestep, int maxTimestep,
-                 IBentoVolumeDrawer *volDrawer, glm::mat4 bentoToWorld,
+                 glm::mat4 bentoToWorld,
                  float maxViewWidth, float maxViewHeight);
     
   virtual ~BentoBoxWidget();
@@ -100,7 +100,6 @@ private:
     int _numInstances;
     int _minTimestep;
     int _maxTimestep;
-    IBentoVolumeDrawer *_volDrawer;
 	std::vector<BentoViewSettings> _viewSettings;
 	std::vector<int> _criticalTimes;
 	glm::mat4 _toWorld;
@@ -116,7 +115,7 @@ private:
 
 class BentoBoxWidgetRenderer {
 public:
-    BentoBoxWidgetRenderer(BentoBoxWidget *widget);
+    BentoBoxWidgetRenderer(BentoBoxWidget *widget, IBentoVolumeDrawer *volDrawer);
     virtual ~BentoBoxWidgetRenderer();
     
     // Call once per eye.  This draws the entire widget, making calls to the BentoVolumeDrawer
@@ -130,7 +129,7 @@ public:
 private:
     BentoBoxWidget *_bento;
     QuickShapes *_quickShapes;
-    
+    IBentoVolumeDrawer *_volDrawer;
 };
 
 

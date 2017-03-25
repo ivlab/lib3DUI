@@ -118,8 +118,8 @@ UIExample::UIExample(int argc, char** argv) : VRApp(argc, argv),
 
     
     
-    _bento = new BentoBoxWidget(9, 0, 400, &gVolRend, glm::mat4(1.0), 3.0, 2.0);
-    _bentoRend = new BentoBoxWidgetRenderer(_bento);
+    _bento = new BentoBoxWidget(9, 0, 400, glm::mat4(1.0), 3.0, 2.0);
+    _bentoRend = new BentoBoxWidgetRenderer(_bento, &gVolRend);
 }
 
 UIExample::~UIExample()

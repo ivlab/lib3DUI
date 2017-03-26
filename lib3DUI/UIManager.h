@@ -13,14 +13,7 @@ class UIManagerRenderer;
 class UIManager : public IUIManager {
 friend UIManagerRenderer;
 public:
-    
-    enum UI_STATE {
-        STATE_OVERVIEW = 0,
-        STATE_VOLUME = 1,
-        STATE_WIDGET = 2
-    };
-    
-    
+
     enum CURSOR_TYPE {
         CURSOR_LASER = 0,
         CURSOR_SPHERE = 1,
@@ -31,7 +24,7 @@ public:
     virtual ~UIManager();
     
     
-    void setState(UI_STATE newState);
+    void setState(UIState::STATE_ID newState);
     
     // Tracker move event
     void rhandTrackerMove(glm::mat4 transform);
@@ -58,9 +51,10 @@ public:
     
 private:
     
-    UI_STATE  _currentStateID;
+    UIState::STATE_ID  _currentStateID;
     UIState   *_currentState;
     UIState   *_overviewState;
+    UIState   *_insideVolState;
     
     CURSOR_TYPE _lhandCursorType;
     CURSOR_TYPE _rhandCursorType;

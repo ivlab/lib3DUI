@@ -2,10 +2,13 @@
 #include "UIManager.h"
 #include "QuickShapes.h"
 #include "UIOverviewState.h"
+#include "UIInsideVolState.h"
 
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
+#include <iostream>
 
 
 UIManager::UIManager(BentoBoxWidget *bento) :
@@ -17,23 +20,41 @@ UIManager::UIManager(BentoBoxWidget *bento) :
     _rhandMat(glm::mat4(1.0))
 {
     _overviewState = new UIOverviewState(this, bento);
+    _insideVolState = new UIInsideVolState(this, bento);
     _currentState = _overviewState;
-    _currentStateID = STATE_OVERVIEW;
+    _currentStateID = UIState::STATE_OVERVIEW;
 }
 
 
 UIManager::~UIManager() {
     delete _overviewState;
+    delete _insideVolState;
 }
     
     
-void UIManager::setState(UI_STATE newState) {
-    if (newState == STATE_OVERVIEW) {
-        _currentState->exitState();
-        _currentStateID = STATE_OVERVIEW;
+void UIManager::setState(UIState::STATE_ID newState) {
+    if (newState == UIState::STATE_OVERVIEW) {
+        UIState *prev = _currentState;
+        UIState::STATE_ID prevID = _currentStateID;
+        prev->exitState();
+        _currentStateID = UIState::STATE_OVERVIEW;
         _currentState = _overviewState;
-        _currentState->enterState();
+        _currentState->enterState(prevID);
     }
+    else if (newState == UIState::STATE_INSIDEVOL) {
+        UIState *prev = _currentState;
+        UIState::STATE_ID prevID = _currentStateID;
+        prev->exitState();
+        _currentStateID = UIState::STATE_INSIDEVOL;
+        _currentState = _insideVolState;
+        _currentState->enterState(prevID);
+    }
+    else {
+        std::cerr << "UIManager: unknown state " << (int)newState << std::endl;
+        exit(1);
+    }
+    
+    
     // ...
 }
 

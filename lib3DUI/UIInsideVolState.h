@@ -1,5 +1,5 @@
-#ifndef UIOVERVIEWSTATE_H
-#define UIOVERVIEWSTATE_H
+#ifndef UISCALINGSTATE_H
+#define UISCALINGSTATE_H
 
 
 #include <glm/glm.hpp>
@@ -8,10 +8,10 @@
 #include "UIState.h"
 
 
-class UIOverviewState : public UIState {
+class UIInsideVolState : public UIState {
 public:
-    UIOverviewState(UIManager *uiMgr, BentoBoxWidget *bento);
-    virtual ~UIOverviewState();
+    UIInsideVolState(UIManager *uiMgr, BentoBoxWidget *bento);
+    virtual ~UIInsideVolState();
 
     void enterState(STATE_ID fromState);
     void exitState();
@@ -28,8 +28,6 @@ public:
     
 private:
     BentoBoxWidget *_bento;
-    bool _grabbing;
-    STATE_ID _prevStateID;
 };
 
 #endif

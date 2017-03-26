@@ -13,10 +13,16 @@ class UIManager;
     specific behavior given the current state. */ 
 class UIState {
 public:
+    
+    enum STATE_ID {
+        STATE_OVERVIEW = 0,
+        STATE_INSIDEVOL = 1
+    };
+    
 	UIState(UIManager *uiMgr) : _uiMgr(uiMgr) {}
 	virtual ~UIState() {}
 
-	virtual void enterState() {}
+	virtual void enterState(STATE_ID fromState) {}
 	virtual void exitState() {}
 
 	virtual void lhandTrackerMove(glm::mat4 transform) {}

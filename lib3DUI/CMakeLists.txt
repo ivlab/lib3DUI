@@ -8,6 +8,7 @@ set(source_files
   QuickShapes.cpp
   UIManager.cpp
   UIOverviewState.cpp
+  UIInsideVolState.cpp
 )
 
 set(header_files
@@ -16,6 +17,7 @@ set(header_files
   QuickShapes.h
   UIManager.h
   UIOverviewState.h
+  UIInsideVolState.h
   UIState.h
 )
 

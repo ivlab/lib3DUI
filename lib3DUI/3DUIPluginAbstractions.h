@@ -28,6 +28,8 @@ public:
     // Call once per frame.  This advances any active animations.  Pass the synchronized system time
     // from MinVR in here.
     virtual void animate(float currentSysTime) = 0;
+    int getNumViewSettings() = 0;
+    IBentoViewSettings & getViewSettings(int viewID) = 0;
 };
 
 
@@ -39,8 +41,6 @@ public:
     
     // Draws a white sphere around each subvolume
     virtual void drawBoundingSpheres(glm::mat4 viewMatrix, glm::mat4 projMatrix) = 0;
-    virtual int getNumViewSettings() =0;
-    virtual IBentoViewSettings & getViewSettings(int viewID) =0;
 };
 
 

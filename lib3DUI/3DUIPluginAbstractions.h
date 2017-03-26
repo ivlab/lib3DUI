@@ -39,6 +39,8 @@ public:
     
     // Draws a white sphere around each subvolume
     virtual void drawBoundingSpheres(glm::mat4 viewMatrix, glm::mat4 projMatrix) = 0;
+    virtual int getNumViewSettings() =0;
+    virtual IBentoViewSettings & getViewSettings(int viewID) =0;
 };
 
 

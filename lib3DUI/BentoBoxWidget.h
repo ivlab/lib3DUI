@@ -74,6 +74,8 @@ public:
         
     glm::vec3 centerOfBox(int r, int c);
 
+    std::vector<BentoViewSettings> & getViewSettings() { return _viewSettings;}
+
 private:
 
     

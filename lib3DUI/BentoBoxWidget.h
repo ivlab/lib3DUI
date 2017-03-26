@@ -74,6 +74,8 @@ public:
         
     glm::vec3 centerOfBox(int r, int c);
 
+    int getNumViewSettings() { return _viewSettings.size();}
+    IBentoViewSettings & getViewSettings(int viewID) { return _viewSettings.at(viewID);}
 private:
 
     

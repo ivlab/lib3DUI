@@ -35,10 +35,10 @@ class IBentoBoxWidgetRenderer {
 public:
     // Call once per eye.  This draws the entire widget, making calls to the BentoVolumeDrawer
     // passed to the constructor as needed in order to draw all the relevant sub-volumes.
-    virtual void draw(glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix) = 0;
+    virtual void draw(glm::mat4 viewMatrix, glm::mat4 projMatrix) = 0;
     
     // Draws a white sphere around each subvolume
-    virtual void drawBoundingSpheres(glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix) = 0;
+    virtual void drawBoundingSpheres(glm::mat4 viewMatrix, glm::mat4 projMatrix) = 0;
 };
 
 
@@ -71,7 +71,7 @@ public:
 class IUIManagerRenderer {
 public:
 
-    virtual void draw(glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix) = 0;
+    virtual void draw(glm::mat4 viewMatrix, glm::mat4 projMatrix) = 0;
 };
 
 

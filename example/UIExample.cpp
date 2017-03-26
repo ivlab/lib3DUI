@@ -37,6 +37,8 @@
 
 #include <cmath>
 
+#include <iostream>
+
 
 QuickShapes QS;
 
@@ -116,10 +118,15 @@ UIExample::UIExample(int argc, char** argv) : VRApp(argc, argv) {
 
     
     
-    _bento = new BentoBoxWidget(9, 0, 400, glm::mat4(1.0), 3.0, 2.0);
+    // For a vertical layout in the Cave:
+    _bento = new BentoBoxWidget(9, 0, 400, glm::rotate(glm::mat4(1.0), 1.57f, glm::vec3(1,0,0)), 3.0, 2.0);
+    
+    // For a horizontal layout on a table:
+    //_bento = new BentoBoxWidget(9, 0, 400, glm::mat4(1.0), 3.0, 2.0);
+                                
     _bentoRend = new BentoBoxWidgetRenderer(_bento, &gVolRend);
     
-    _uiMgr = new UIManager();
+    _uiMgr = new UIManager(_bento);
     _uiMgrRend = new UIManagerRenderer(_uiMgr);
 }
 
@@ -132,7 +139,7 @@ void UIExample::onVREvent(const VREvent &event)
 {
     // When working with MinVR, this is a very useful printout for debugging
     // input events.
-    event.print();
+    //event.print();
     
     
     if (_rHandDownEvents.find(event.getName()) != _rHandDownEvents.end()) {
@@ -178,11 +185,9 @@ void UIExample::onVRRenderGraphicsContext(const VRGraphicsState &renderState) {
 void UIExample::onVRRenderGraphics(const VRGraphicsState &renderState) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-    _uiMgrRend->draw(glm::mat4(1.0),
-                     glm::make_mat4(renderState.getViewMatrix()),
+    _uiMgrRend->draw(glm::make_mat4(renderState.getViewMatrix()),
                      glm::make_mat4(renderState.getProjectionMatrix()));
 
-    _bentoRend->draw(glm::rotate(glm::mat4(1.0), 1.57f, glm::vec3(1,0,0)),
-                     glm::make_mat4(renderState.getViewMatrix()),
+    _bentoRend->draw(glm::make_mat4(renderState.getViewMatrix()),
                      glm::make_mat4(renderState.getProjectionMatrix()));
 }

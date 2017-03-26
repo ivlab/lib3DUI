@@ -3,6 +3,7 @@
 
 
 #include "3DUIPluginAbstractions.h"
+#include "BentoBoxWidget.h"
 #include "UIState.h"
 #include "QuickShapes.h"
 
@@ -14,9 +15,9 @@ friend UIManagerRenderer;
 public:
     
     enum UI_STATE {
-        START_STATE = 0,
-        INKING_STATE = 1,
-        GRABBING_STATE = 2
+        STATE_OVERVIEW = 0,
+        STATE_VOLUME = 1,
+        STATE_WIDGET = 2
     };
     
     
@@ -26,7 +27,7 @@ public:
         CURSOR_CUBE = 2
     };
     
-    UIManager();
+    UIManager(BentoBoxWidget *bento);
     virtual ~UIManager();
     
     
@@ -51,10 +52,15 @@ public:
     // Called when the hand button is released.
     void lhandBtnUp();
     
+    glm::mat4 getLHandMat() { return _lhandMat; }
+    
+    glm::mat4 getRHandMat() { return _rhandMat; }
+    
 private:
     
     UI_STATE  _currentStateID;
     UIState   *_currentState;
+    UIState   *_overviewState;
     
     CURSOR_TYPE _lhandCursorType;
     CURSOR_TYPE _rhandCursorType;
@@ -73,7 +79,7 @@ public:
     UIManagerRenderer(UIManager *mgr);
     virtual ~UIManagerRenderer();
     
-    void draw(glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix);
+    void draw(glm::mat4 viewMatrix, glm::mat4 projMatrix);
     
 private:
     UIManager *_mgr;

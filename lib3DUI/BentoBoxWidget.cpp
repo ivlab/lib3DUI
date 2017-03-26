@@ -139,9 +139,9 @@ BentoBoxWidgetRenderer::~BentoBoxWidgetRenderer() {
 }
 
 
-void BentoBoxWidgetRenderer::draw(glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix) {
+void BentoBoxWidgetRenderer::draw(glm::mat4 viewMatrix, glm::mat4 projMatrix) {
     
-    glm::mat4 xform = modelMatrix * _bento->_scaleMat * _bento->_transMat;
+    glm::mat4 xform = _bento->_toWorld * _bento->_scaleMat * _bento->_transMat;
     
     // Draw cubbies
     float col[3] = {1.0, 1.0, 1.0};
@@ -180,7 +180,9 @@ void BentoBoxWidgetRenderer::draw(glm::mat4 modelMatrix, glm::mat4 viewMatrix, g
 }
 
     
-void BentoBoxWidgetRenderer::drawBoundingSpheres(glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projMatrix) {
+void BentoBoxWidgetRenderer::drawBoundingSpheres(glm::mat4 viewMatrix, glm::mat4 projMatrix) {
+    glm::mat4 xform = _bento->_toWorld * _bento->_scaleMat * _bento->_transMat;
+    
     float col[3] = {1.0, 1.0, 1.0};
     glm::mat4 S = glm::mat4(1.0);
     S[0].x = 0.9;
@@ -191,7 +193,7 @@ void BentoBoxWidgetRenderer::drawBoundingSpheres(glm::mat4 modelMatrix, glm::mat
     for (int r = 0; r < nrows; r++) {
         for (int c = 0; c < ncols; c++) {
             glm::vec3 ctr = _bento->centerOfBox(r,c);
-            glm::mat4 M = modelMatrix * glm::translate(glm::mat4(1.0), ctr) * S;
+            glm::mat4 M = xform * glm::translate(glm::mat4(1.0), ctr) * S;
             // scale because sphere is radius = 2.0
             glm::mat4 S2 = glm::mat4(1.0);
             S2[0].x = 0.5;

@@ -9,12 +9,9 @@
 #include <iostream>
 
 
-BentoBoxWidget::BentoBoxWidget(int numInstances, int minTimestep, int maxTimestep,
-                               glm::mat4 bentoToWorld,
+BentoBoxWidget::BentoBoxWidget(int numInstances, glm::mat4 bentoToWorld,
                                float maxViewWidth, float maxViewHeight) :
     _numInstances(numInstances),
-    _minTimestep(minTimestep),
-    _maxTimestep(maxTimestep),
     _toWorld(bentoToWorld),
     _maxViewWidth(maxViewWidth),
     _maxViewHeight(maxViewHeight),
@@ -29,18 +26,7 @@ BentoBoxWidget::BentoBoxWidget(int numInstances, int minTimestep, int maxTimeste
     
     // Each colum will display one or more timesteps.
     // Intitialize to always display the very first timestep
-    _criticalTimes.push_back(_minTimestep);
-
-    /**
-    // If there are 3 or more timesteps display the midpoint as well
-    if (_maxTimestep > _minTimestep + 1) {
-        _criticalTimes.push_back((_maxTimestep - _minTimestep) / 2);
-    }
-    // If there are 2 or more timesteps display the last as well
-    if (_maxTimestep > _minTimestep) {
-        _criticalTimes.push_back(_maxTimestep);
-    }
-    **/
+    _criticalTimes.push_back(0.0);
     
     _scaleMat = glm::mat4(1.0);
     _transMat = glm::mat4(1.0);

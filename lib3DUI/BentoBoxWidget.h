@@ -44,8 +44,7 @@ public:
     // Timesteps are assumed to be discrete numbered ints, usually minTimestep is 0.  A volume
     // drawing interface is used to keep the widget generic -- anything rendering technique
     // that implements this interface may be used to display the subvolumes.
-    BentoBoxWidget(int numInstances, int minTimestep, int maxTimestep,
-                   glm::mat4 bentoToWorld,
+    BentoBoxWidget(int numInstances, glm::mat4 bentoToWorld,
                    float maxViewWidth, float maxViewHeight);
     
     virtual ~BentoBoxWidget();
@@ -87,6 +86,9 @@ public:
 
     int getNumViewSettings() { return _viewSettings.size();}
     IBentoViewSettings & getViewSettings(int viewID) { return _viewSettings.at(viewID);}
+    
+    std::vector<float> getCriticalTimes() { return _criticalTimes; }
+    
 private:
 
     
@@ -108,10 +110,8 @@ private:
     
     
     int _numInstances;
-    int _minTimestep;
-    int _maxTimestep;
 	std::vector<BentoViewSettings> _viewSettings;
-	std::vector<int> _criticalTimes;
+	std::vector<float> _criticalTimes;
 	glm::mat4 _toWorld;
     float _maxViewWidth;
     float _maxViewHeight;

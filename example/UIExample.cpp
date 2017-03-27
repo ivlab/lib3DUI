@@ -119,10 +119,10 @@ UIExample::UIExample(int argc, char** argv) : VRApp(argc, argv) {
     
     
     // For a vertical layout in the Cave:
-    _bento = new BentoBoxWidget(9, 0, 400, glm::rotate(glm::mat4(1.0), 1.57f, glm::vec3(1,0,0)), 3.0, 2.0);
+    _bento = new BentoBoxWidget(9, glm::rotate(glm::mat4(1.0), 1.57f, glm::vec3(1,0,0)), 3.0, 2.0);
     
     // For a horizontal layout on a table:
-    //_bento = new BentoBoxWidget(9, 0, 400, glm::mat4(1.0), 3.0, 2.0);
+    //_bento = new BentoBoxWidget(9, glm::mat4(1.0), 3.0, 2.0);
                                 
     _bentoRend = new BentoBoxWidgetRenderer(_bento, &gVolRend);
     

@@ -3,6 +3,8 @@
 #define UIPLUGINABSTRACTIONS_H
 
 #include <glm/glm.hpp>
+#include <vector>
+
 
 class IBentoViewSettings {
 public:
@@ -30,6 +32,7 @@ public:
     virtual void animate(float currentSysTime) = 0;
     virtual int getNumViewSettings() = 0;
     virtual IBentoViewSettings & getViewSettings(int viewID) = 0;
+    virtual std::vector<float> getCriticalTimes() = 0;
 };
 
 

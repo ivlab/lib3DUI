@@ -85,6 +85,8 @@ public:
     // are set to the indices of that subvolume.
     bool insideSubVolume(const glm::vec3 &testPt, int *hitRow, int *hitCol);
 
+    int getNumViewSettings() { return _viewSettings.size();}
+    IBentoViewSettings & getViewSettings(int viewID) { return _viewSettings.at(viewID);}
 private:
 
     

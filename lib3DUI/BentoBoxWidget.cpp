@@ -125,6 +125,37 @@ void BentoBoxWidget::transitionToView(int minRow, int minCol, int maxRow, int ma
 
 
 
+bool BentoBoxWidget::intersectSubVolume(const glm::vec3 &rayOrigin, const glm::vec3 &rayDir, int *hitRow, int *hitCol) {
+    // TODO
+    return false;
+}
+
+
+
+bool BentoBoxWidget::insideSubVolume(const glm::vec3 &testPt, int *hitRow, int *hitCol) {
+    int nrows = _viewSettings.size();
+    int ncols = _numInstances * _criticalTimes.size();
+    for (int r = 0; r < nrows; r++) {
+        for (int c = 0; c < ncols; c++) {
+            glm::vec3 ctr = centerOfBox(r,c);
+            float l = glm::length(testPt - ctr);
+            if (l < 0.45) {  // subvols have diameter 0.9
+                *hitRow = r;
+                *hitCol = c;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+
+
+
+
+
+
+
 // -----------------------  Renderer Friend Class ---------------------------
 
 
@@ -205,8 +236,4 @@ void BentoBoxWidgetRenderer::drawBoundingSpheres(glm::mat4 viewMatrix, glm::mat4
     }
     
 }
-
-
-
-
 

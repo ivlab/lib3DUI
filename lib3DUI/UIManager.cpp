@@ -1,9 +1,6 @@
 
 #include "UIManager.h"
 #include "QuickShapes.h"
-#include "UIOverviewState.h"
-#include "UIInsideVolState.h"
-
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -19,43 +16,62 @@ UIManager::UIManager(BentoBoxWidget *bento) :
     _lhandMat(glm::mat4(1.0)),
     _rhandMat(glm::mat4(1.0))
 {
-    _overviewState = new UIOverviewState(this, bento);
-    _insideVolState = new UIInsideVolState(this, bento);
-    _currentState = _overviewState;
-    _currentStateID = UIState::STATE_OVERVIEW;
+    _bothOutsideVol = new BothOutsideVol(this, bento);
+    _dhInsideVol = new DHInsideVol(this, bento);
+    _ndhInsideVol = new NDHInsideVol(this, bento);
+    _bothInsideVol = new BothInsideVol(this, bento);
+
+    _currentState = _bothOutsideVol;
+    _currentStateID = UIState::STATE_BOTHOUTSIDE;
 }
 
 
 UIManager::~UIManager() {
-    delete _overviewState;
-    delete _insideVolState;
+    delete _bothOutsideVol;
+    delete _dhInsideVol;
+    delete _ndhInsideVol;
+    delete _bothInsideVol;
 }
     
     
 void UIManager::setState(UIState::STATE_ID newState) {
-    if (newState == UIState::STATE_OVERVIEW) {
+    if (newState == UIState::STATE_BOTHOUTSIDE) {
         UIState *prev = _currentState;
         UIState::STATE_ID prevID = _currentStateID;
         prev->exitState();
-        _currentStateID = UIState::STATE_OVERVIEW;
-        _currentState = _overviewState;
+        _currentStateID = UIState::STATE_BOTHOUTSIDE;
+        _currentState = _bothOutsideVol;
         _currentState->enterState(prevID);
     }
-    else if (newState == UIState::STATE_INSIDEVOL) {
+    else if (newState == UIState::STATE_DHINSIDE) {
         UIState *prev = _currentState;
         UIState::STATE_ID prevID = _currentStateID;
         prev->exitState();
-        _currentStateID = UIState::STATE_INSIDEVOL;
-        _currentState = _insideVolState;
+        _currentStateID = UIState::STATE_DHINSIDE;
+        _currentState = _dhInsideVol;
         _currentState->enterState(prevID);
     }
+    else if (newState == UIState::STATE_NDHINSIDE) {
+        UIState *prev = _currentState;
+        UIState::STATE_ID prevID = _currentStateID;
+        prev->exitState();
+        _currentStateID = UIState::STATE_NDHINSIDE;
+        _currentState = _ndhInsideVol;
+        _currentState->enterState(prevID);
+    }
+    else if (newState == UIState::STATE_BOTHINSIDE) {
+        UIState *prev = _currentState;
+        UIState::STATE_ID prevID = _currentStateID;
+        prev->exitState();
+        _currentStateID = UIState::STATE_BOTHINSIDE;
+        _currentState = _bothInsideVol;
+        _currentState->enterState(prevID);
+    }
+
     else {
         std::cerr << "UIManager: unknown state " << (int)newState << std::endl;
         exit(1);
     }
-    
-    
-    // ...
 }
 
 

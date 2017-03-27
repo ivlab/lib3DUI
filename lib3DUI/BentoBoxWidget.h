@@ -71,8 +71,19 @@ public:
     glm::mat4 getBentoToWorldMat() { return _toWorld; }
     
     void setBentoToWorldMat(const glm::mat4 &bentoToWorld) { _toWorld = bentoToWorld; }
-        
+    
+    glm::mat4 getSubVolumesToWorldMat() { return _toWorld * _scaleMat * _transMat; }
+    
+    
     glm::vec3 centerOfBox(int r, int c);
+    
+    // True if the ray intersects one of the subVolumes.  If true, then hitRow and hitCol
+    // are set to the indices of that subvolume.
+    bool intersectSubVolume(const glm::vec3 &rayOrigin, const glm::vec3 &rayDir, int *hitRow, int *hitCol);
+    
+    // True if testPt lies within a subVolume.  If true, then hitRow and hitCol
+    // are set to the indices of that subvolume.
+    bool insideSubVolume(const glm::vec3 &testPt, int *hitRow, int *hitCol);
 
 private:
 

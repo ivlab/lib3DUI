@@ -4,7 +4,7 @@
 
 #include "3DUIPluginAbstractions.h"
 #include "BentoBoxWidget.h"
-#include "UIState.h"
+#include "UIStates.h"
 #include "QuickShapes.h"
 
 
@@ -53,8 +53,10 @@ private:
     
     UIState::STATE_ID  _currentStateID;
     UIState   *_currentState;
-    UIState   *_overviewState;
-    UIState   *_insideVolState;
+    UIState   *_bothOutsideVol;
+    UIState   *_dhInsideVol;
+    UIState   *_ndhInsideVol;
+    UIState   *_bothInsideVol;
     
     CURSOR_TYPE _lhandCursorType;
     CURSOR_TYPE _rhandCursorType;

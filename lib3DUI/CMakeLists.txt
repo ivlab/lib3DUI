@@ -7,8 +7,7 @@ set(source_files
   BentoBoxWidget.cpp
   QuickShapes.cpp
   UIManager.cpp
-  UIOverviewState.cpp
-  UIInsideVolState.cpp
+  UIStates.cpp
 )
 
 set(header_files
@@ -16,9 +15,7 @@ set(header_files
   BentoBoxWidget.h
   QuickShapes.h
   UIManager.h
-  UIOverviewState.h
-  UIInsideVolState.h
-  UIState.h
+  UIStates.h
 )
 
 set(extra_files

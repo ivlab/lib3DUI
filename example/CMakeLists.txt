@@ -30,7 +30,17 @@ include_directories(
 	${MinVR_INCLUDE_DIR}
   ${glm_INCLUDE_DIR}
   ../lib3DUI
+  ${CMAKE_SOURCE_DIR}/lib/glew/include
 )
+
+add_definitions(-DGLEW_STATIC)
+if(MSVC)
+	set(ALL_LIBS ${ALL_LIBS} optimized glew.lib debug glew_d.lib)
+else()
+	set(ALL_LIBS ${ALL_LIBS} optimized libglew.a debug libglew_d.a)
+endif()
+
+link_directories(${CMAKE_BINARY_DIR}/plugins/deps/lib)
 
 #---------------------- OS Specific Flags ----------------------
 

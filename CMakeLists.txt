@@ -52,13 +52,13 @@ endforeach(CONF CMAKE_CONFIGURATION_TYPES)
 
 find_package(OpenGL REQUIRED)
 
-find_package(glm)
-if (NOT ${glm_FOUND})
-  message(STATUS "Package not found (glm): Ok, will download into 3rdparty directory when building ${PROJECT_NAME}")
+#find_package(glm)
+#if (NOT ${glm_FOUND})
+#  message(STATUS "Package not found (glm): Ok, will download into 3rdparty directory when building ${PROJECT_NAME}")
   include(CMakeLists-ExternalProj-GLM.txt)
-endif (NOT ${glm_FOUND})
+#endif (NOT ${glm_FOUND})
 
-
+add_subdirectory(lib/glew)
 
 # ---- This Project Has Two Subdirs ----
 

@@ -110,7 +110,7 @@ void BentoBoxWidget::transitionToView(int minRow, int minCol, int maxRow, int ma
     
     float sw = _maxViewWidth / (float)(maxCol - minCol + 1);
     float sh = _maxViewHeight / (float)(maxRow - minRow + 1);
-    float newScale = glm::min(sw, sh);
+    float newScale = min(sw, sh);
     
     std::cout << newScale << std::endl;
     

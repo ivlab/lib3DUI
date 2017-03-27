@@ -18,15 +18,19 @@
 #define QUICKSHAPES_H
 
 
-// OpenGL Headers
+#include "GL/glew.h"
+#ifdef _WIN32
+#include "GL/wglew.h"
+#elif (!defined(__APPLE__))
+#include "GL/glxew.h"
+#endif
+
 #if defined(WIN32)
 #define NOMINMAX
 #include <windows.h>
 #include <GL/gl.h>
 #elif defined(__APPLE__)
-#define GL_GLEXT_PROTOTYPES
-#include <OpenGL/gl3.h>
-#include <OpenGL/glext.h>
+#include <OpenGL/OpenGL.h>
 #else
 #define GL_GLEXT_PROTOTYPES
 #include <GL/gl.h>

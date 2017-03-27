@@ -33,9 +33,18 @@ include_directories(
 	${OPENGL_INCLUDE_DIR}
   ${glm_INCLUDE_DIR}
   ${GLM_INCLUDE_DIRS}
+  ${CMAKE_SOURCE_DIR}/lib/glew/include
 )
 
 #---------------------- Create Lib ----------------------
+add_definitions(-DGLEW_STATIC)
+if(MSVC)
+	set(ALL_LIBS ${ALL_LIBS} optimized glew.lib debug glew_d.lib)
+else()
+	set(ALL_LIBS ${ALL_LIBS} optimized libglew.a debug libglew_d.a)
+endif()
+
+link_directories(${CMAKE_BINARY_DIR}/plugins/deps/lib)
 
 add_library(${PROJECT_NAME} ${source_files} ${header_files} ${extra_files})
 

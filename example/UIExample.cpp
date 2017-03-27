@@ -97,7 +97,7 @@ YourVolumeRenderer gVolRend;
 
 
 
-UIExample::UIExample(int argc, char** argv) : VRApp(argc, argv) {
+UIExample::UIExample(int argc, char** argv) : VRApp(argc, argv, "desktop.minvr") {
     // Desktop mode
     _rHandTrackerEvents.insert("FakeTracker1_Move");
     _lHandTrackerEvents.insert("FakeTracker2_Move");

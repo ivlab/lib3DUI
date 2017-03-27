@@ -12,6 +12,7 @@ public:
     virtual bool getShowWallStress() = 0;
     virtual bool getShowLeadStress() = 0;
     virtual glm::mat4 getDataToBentoMat() = 0;
+    virtual void setDataToBentoMat(const glm::mat4 &m) = 0;
 };
 
 

@@ -199,7 +199,11 @@ void NDHInsideVol::exitState() {
 void NDHInsideVol::lhandTrackerMove(glm::mat4 transform) {
     glm::vec3 posInBentoFrame = glm::inverse(_bento->getSubVolumesToWorldMat()) * transform[3];
     int row, col;
-    if (!_bento->insideSubVolume(posInBentoFrame, &row, &col)) {
+    if (_bento->insideSubVolume(posInBentoFrame, &row, &col)) {
+        _bento->clearSelected();
+        _bento->addToSelected(row, col);
+    }
+    else {
         _bento->clearSelected();
         _uiMgr->setState(STATE_BOTHOUTSIDE);
     }
@@ -209,6 +213,16 @@ void NDHInsideVol::lhandBtnDown() {
 }
 
 void NDHInsideVol::lhandTrackerDrag(glm::mat4 transform) {
+    //glm::mat4 M = transform * glm::inverse(_uiMgr->getLHandMat()) * _bento->getBentoToWorldMat();
+    //_bento->setBentoToWorldMat(M);
+    
+    glm::ivec2 rc = _bento->getSelected()[0];
+    glm::mat4 dataToBento = _bento->getViewSettings(rc[0]).getDataToBentoMat();
+    glm::mat4 transInDataSpace = glm::inverse(_bento->getSubVolumeToWorldMat(rc[0],rc[1])) * transform;
+    glm::mat4 lastInDataSpace = glm::inverse(_bento->getSubVolumeToWorldMat(rc[0],rc[1])) * _uiMgr->getLHandMat();
+    glm::mat4 M = transInDataSpace * glm::inverse(lastInDataSpace) * dataToBento;
+    
+    _bento->getViewSettings(rc[0]).setDataToBentoMat(M);
 }
 
 void NDHInsideVol::lhandBtnUp() {

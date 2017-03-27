@@ -151,7 +151,7 @@ void BentoBoxWidget::addNewViewRow(int r, int c, glm::vec3 selectionPt, float se
     
     BentoViewSettings settings = _viewSettings[r];
     glm::mat4 M = glm::scale(glm::mat4(1.0), glm::vec3(1.0f/radInVolSpace, 1.0f/radInVolSpace, 1.0f/radInVolSpace)) *
-                  glm::translate(glm::mat4(1.0), -ptInVolSpace);
+                  glm::translate(glm::mat4(1.0), -ptInVolSpace) * settings.getDataToBentoMat();
     settings.setDataToBentoMat(M);
     _viewSettings.push_back(settings);
 }

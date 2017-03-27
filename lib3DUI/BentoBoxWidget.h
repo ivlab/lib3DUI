@@ -3,6 +3,8 @@
 #define BENTOBOXWIDGET_H
 
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <vector>
 #include <algorithm>
 
@@ -79,6 +81,10 @@ public:
     void setBentoToWorldMat(const glm::mat4 &bentoToWorld) { _toWorld = bentoToWorld; }
     
     glm::mat4 getSubVolumesToWorldMat() { return _toWorld * _scaleMat * _transMat; }
+    
+    glm::mat4 getSubVolumeToWorldMat(int r, int c) {
+        return getSubVolumesToWorldMat() * glm::translate(glm::mat4(1.0), centerOfBox(r,c));
+    }
     
     
     glm::vec3 centerOfBox(int r, int c);

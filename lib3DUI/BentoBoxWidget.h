@@ -20,24 +20,27 @@ public:
         showFlow(true),
         showWallStress(true),
         showLeadStress(true),
-        dataToBento(glm::mat4(1.0)) {}
+        dataToBento(glm::mat4(1.0)),
+        rowID(0) {}
     
     bool getShowFlow() { return showFlow; }
     bool getShowWallStress() { return showWallStress; }
     bool getShowLeadStress() { return showLeadStress; }
     glm::mat4 getDataToBentoMat() { return dataToBento; }
+    int getRowID() { return rowID; }
     
+    void setShowFlow(bool s) { showFlow = s; }
+    void setShowWallStress(bool s) { showWallStress = s; }
+    void setShowLeadStress(bool s) { showLeadStress = s; }
     void setDataToBentoMat(const glm::mat4 &m) { dataToBento = m; }
+    void setRowID(int r) { rowID = r; }
     
 private:
     bool showFlow;
     bool showWallStress;
     bool showLeadStress;
     glm::mat4 dataToBento;
-    // voi = "volume of interest"
-    std::vector<glm::vec3> voiPoints;
-    std::vector<float> voiRads;
-    std::vector<glm::vec3> voiColors; // for highlighting inside the vol
+    int rowID;
 };
 
 
@@ -98,7 +101,8 @@ public:
     bool insideSubVolume(const glm::vec3 &testPt, int *hitRow, int *hitCol);
 
     int getNumViewSettings() { return _viewSettings.size();}
-    IBentoViewSettings & getViewSettings(int viewID) { return _viewSettings.at(viewID);}
+    IBentoViewSettings & getViewSettings(int viewID) { return _viewSettings.at(viewID); }
+    void removeFromViewSettings(int viewID) { _viewSettings.erase(_viewSettings.begin() + viewID); }
     
     // parameters come from a VOI sphere defined interactively in a particular row, col.
     // the view settings are copied from that box and a new transformation is applied
@@ -122,6 +126,11 @@ public:
     void removeFromSelected(int r, int c) {
         _selected.erase(std::remove(_selected.begin(), _selected.end(), glm::ivec2(r,c)), _selected.end());
     }
+    
+    
+    bool getVOISelectionActive() { return _voiSelectionActive; }
+    void setVOISelectionActive(bool v) { _voiSelectionActive = v; }
+
     
 private:
 
@@ -154,6 +163,7 @@ private:
     Transition *_transition;
     float _lastSysTime;
     std::vector<glm::ivec2> _selected;
+    bool _voiSelectionActive;
 };
 
 

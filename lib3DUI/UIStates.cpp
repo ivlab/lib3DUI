@@ -158,19 +158,26 @@ void DHInsideVol::rhandTrackerMove(glm::mat4 transform) {
 
 void DHInsideVol::rhandBtnDown() {
     _uiMgr->lockVOISpherePos();
+    _bento->setVOISelectionActive(true);
     _spherePt = glm::inverse(_bento->getSubVolumesToWorldMat()) * _uiMgr->getRHandMat()[3];
+    glm::ivec2 rc = _bento->getSelected()[0];
+    _bento->addNewViewRow(rc[0], rc[1], _spherePt, 0.0);
 }
 
 void DHInsideVol::rhandTrackerDrag(glm::mat4 transform) {
     glm::vec3 curPt = glm::inverse(_bento->getSubVolumesToWorldMat()) * transform[3];
     _sphereRad = glm::length(curPt - _spherePt);
     _uiMgr->setVOISphereRad(_sphereRad);
+    _bento->removeFromViewSettings(_bento->getNumViewSettings()-1);
+    glm::ivec2 rc = _bento->getSelected()[0];
+    _bento->addNewViewRow(rc[0], rc[1], _spherePt, _sphereRad);
 }
 
 void DHInsideVol::rhandBtnUp() {
-    glm::ivec2 rc = _bento->getSelected()[0];
-    _bento->addNewViewRow(rc[0], rc[1], _spherePt, _sphereRad);
+    //glm::ivec2 rc = _bento->getSelected()[0];
+    //_bento->addNewViewRow(rc[0], rc[1], _spherePt, _sphereRad);
     _uiMgr->resetVOISphere();
+    _bento->setVOISelectionActive(false);
     _bento->clearSelected();
     _uiMgr->setState(STATE_BOTHOUTSIDE);
 }
@@ -213,15 +220,11 @@ void NDHInsideVol::lhandBtnDown() {
 }
 
 void NDHInsideVol::lhandTrackerDrag(glm::mat4 transform) {
-    //glm::mat4 M = transform * glm::inverse(_uiMgr->getLHandMat()) * _bento->getBentoToWorldMat();
-    //_bento->setBentoToWorldMat(M);
-    
     glm::ivec2 rc = _bento->getSelected()[0];
     glm::mat4 dataToBento = _bento->getViewSettings(rc[0]).getDataToBentoMat();
     glm::mat4 transInDataSpace = glm::inverse(_bento->getSubVolumeToWorldMat(rc[0],rc[1])) * transform;
     glm::mat4 lastInDataSpace = glm::inverse(_bento->getSubVolumeToWorldMat(rc[0],rc[1])) * _uiMgr->getLHandMat();
     glm::mat4 M = transInDataSpace * glm::inverse(lastInDataSpace) * dataToBento;
-    
     _bento->getViewSettings(rc[0]).setDataToBentoMat(M);
 }
 
@@ -284,6 +287,12 @@ void BothInsideVol::lhandBtnDown() {
 }
 
 void BothInsideVol::lhandTrackerDrag(glm::mat4 transform) {
+    glm::ivec2 rc = _bento->getSelected()[0];
+    glm::mat4 dataToBento = _bento->getViewSettings(rc[0]).getDataToBentoMat();
+    glm::mat4 transInDataSpace = glm::inverse(_bento->getSubVolumeToWorldMat(rc[0],rc[1])) * transform;
+    glm::mat4 lastInDataSpace = glm::inverse(_bento->getSubVolumeToWorldMat(rc[0],rc[1])) * _uiMgr->getLHandMat();
+    glm::mat4 M = transInDataSpace * glm::inverse(lastInDataSpace) * dataToBento;
+    _bento->getViewSettings(rc[0]).setDataToBentoMat(M);
 }
 
 void BothInsideVol::lhandBtnUp() {
@@ -301,19 +310,26 @@ void BothInsideVol::rhandTrackerMove(glm::mat4 transform) {
 
 void BothInsideVol::rhandBtnDown() {
     _uiMgr->lockVOISpherePos();
+    _bento->setVOISelectionActive(true);
     _spherePt = glm::inverse(_bento->getSubVolumesToWorldMat()) * _uiMgr->getRHandMat()[3];
+    glm::ivec2 rc = _bento->getSelected()[0];
+    _bento->addNewViewRow(rc[0], rc[1], _spherePt, 0.0);
 }
 
 void BothInsideVol::rhandTrackerDrag(glm::mat4 transform) {
     glm::vec3 curPt = glm::inverse(_bento->getSubVolumesToWorldMat()) * transform[3];
     _sphereRad = glm::length(curPt - _spherePt);
     _uiMgr->setVOISphereRad(_sphereRad);
+    _bento->removeFromViewSettings(_bento->getNumViewSettings()-1);
+    glm::ivec2 rc = _bento->getSelected()[0];
+    _bento->addNewViewRow(rc[0], rc[1], _spherePt, _sphereRad);
 }
 
 void BothInsideVol::rhandBtnUp() {
-    glm::ivec2 rc = _bento->getSelected()[0];
-    _bento->addNewViewRow(rc[0], rc[1], _spherePt, _sphereRad);
+    //glm::ivec2 rc = _bento->getSelected()[0];
+    //_bento->addNewViewRow(rc[0], rc[1], _spherePt, _sphereRad);
     _uiMgr->resetVOISphere();
+    _bento->setVOISelectionActive(false);
     _bento->clearSelected();
     _uiMgr->setState(STATE_BOTHOUTSIDE);
 }

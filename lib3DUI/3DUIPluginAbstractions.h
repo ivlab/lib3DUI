@@ -13,6 +13,8 @@ public:
     virtual bool getShowLeadStress() = 0;
     virtual glm::mat4 getDataToBentoMat() = 0;
     virtual void setDataToBentoMat(const glm::mat4 &m) = 0;
+    virtual int getRowID() = 0;
+
 };
 
 
@@ -34,6 +36,7 @@ public:
     virtual int getNumViewSettings() = 0;
     virtual IBentoViewSettings & getViewSettings(int viewID) = 0;
     virtual std::vector<float> getCriticalTimes() = 0;
+    virtual bool getVOISelectionActive() = 0;
 };
 
 

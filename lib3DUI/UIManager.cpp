@@ -172,12 +172,15 @@ void UIManagerRenderer::draw(glm::mat4 viewMatrix, glm::mat4 projMatrix) {
         _quickShapes->drawCube(glm::value_ptr(rM), glm::value_ptr(viewMatrix), glm::value_ptr(projMatrix), rcol);
     }
     else if (_mgr->_rhandCursorType == _mgr->CURSOR_VOISPHERE) {
-        glm::mat4 S = glm::mat4(1.0);
-        S[0].x = _mgr->_voiSphereRad/2.0;
-        S[1].y = _mgr->_voiSphereRad/2.0;
-        S[2].z = _mgr->_voiSphereRad/2.0;
-        glm::mat4 rM = _mgr->_voiSphereMat * S;
-        _quickShapes->drawSphere(glm::value_ptr(rM), glm::value_ptr(viewMatrix), glm::value_ptr(projMatrix), rcol);
+        // don't draw the cursor after it is locked in place and we are scaling it
+        if (!_mgr->_voiSphereLocked) {
+            glm::mat4 S = glm::mat4(1.0);
+            S[0].x = _mgr->_voiSphereRad/2.0;
+            S[1].y = _mgr->_voiSphereRad/2.0;
+            S[2].z = _mgr->_voiSphereRad/2.0;
+            glm::mat4 rM = _mgr->_voiSphereMat * S;
+            _quickShapes->drawSphere(glm::value_ptr(rM), glm::value_ptr(viewMatrix), glm::value_ptr(projMatrix), rcol);
+        }
     }
     else if (_mgr->_rhandCursorType == _mgr->CURSOR_LASER) {
         glm::mat4 S = glm::mat4(1.0);

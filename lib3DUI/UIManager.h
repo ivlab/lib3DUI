@@ -81,8 +81,8 @@ private:
     glm::mat4 _rhandMat;
 
     float _voiSphereRad;
-    bool _voiSphereLocked;
     glm::mat4 _voiSphereMat;
+    bool _voiSphereLocked;
 };
 
 

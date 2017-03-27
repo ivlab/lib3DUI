@@ -16,7 +16,8 @@ BentoBoxWidget::BentoBoxWidget(int numInstances, glm::mat4 bentoToWorld,
     _maxViewWidth(maxViewWidth),
     _maxViewHeight(maxViewHeight),
     _transition(NULL),
-    _lastSysTime(-1.0)
+    _lastSysTime(-1.0),
+    _voiSelectionActive(false)
 {
     // Each row has its own view settings.  We'll start with just one row, so
     // initialize the array with one instance of the default settings.
@@ -68,6 +69,9 @@ void BentoBoxWidget::animate(float currentSysTime) {
 
 glm::vec3 BentoBoxWidget::centerOfBox(int r, int c) {
     int nrows = _viewSettings.size();
+    if (getVOISelectionActive()) {
+        nrows--;
+    }
     int ncols = _numInstances * _criticalTimes.size();
     float rfloat = 0.0;
     if (nrows > 1) {
@@ -153,6 +157,7 @@ void BentoBoxWidget::addNewViewRow(int r, int c, glm::vec3 selectionPt, float se
     glm::mat4 M = glm::scale(glm::mat4(1.0), glm::vec3(1.0f/radInVolSpace, 1.0f/radInVolSpace, 1.0f/radInVolSpace)) *
                   glm::translate(glm::mat4(1.0), -ptInVolSpace) * settings.getDataToBentoMat();
     settings.setDataToBentoMat(M);
+    settings.setRowID(_viewSettings.size());
     _viewSettings.push_back(settings);
 }
 
@@ -188,6 +193,9 @@ void BentoBoxWidgetRenderer::draw(glm::mat4 viewMatrix, glm::mat4 projMatrix) {
     S[2].z = 0.5;
     
     int nrows = _bento->_viewSettings.size();
+    if (_bento->getVOISelectionActive()) {
+        nrows--;
+    }
     int ncols = _bento->_numInstances * _bento->_criticalTimes.size();
     
     //std::cout << nrows << " " << ncols << std::endl;
@@ -234,6 +242,9 @@ void BentoBoxWidgetRenderer::drawBoundingSpheres(glm::mat4 viewMatrix, glm::mat4
     S[1].y = 0.9;
     S[2].z = 0.9;
     int nrows = _bento->_viewSettings.size();
+    if (_bento->getVOISelectionActive()) {
+        nrows--;
+    }
     int ncols = _bento->_numInstances * _bento->_criticalTimes.size();
     for (int r = 0; r < nrows; r++) {
         for (int c = 0; c < ncols; c++) {

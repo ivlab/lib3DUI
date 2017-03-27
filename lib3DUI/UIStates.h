@@ -95,7 +95,8 @@ public:
     void rhandBtnUp();
     
 private:
-    bool _grabbing;
+    glm::vec3 _spherePt;
+    float _sphereRad;
 };
 
 
@@ -121,7 +122,7 @@ public:
     void rhandBtnUp();
     
 private:
-    bool _grabbing;
+
 };
 
 
@@ -147,7 +148,8 @@ public:
     void rhandBtnUp();
     
 private:
-    bool _grabbing;
+    glm::vec3 _spherePt;
+    float _sphereRad;
 };
 
 

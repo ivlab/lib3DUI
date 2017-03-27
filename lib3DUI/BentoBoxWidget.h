@@ -4,6 +4,7 @@
 
 #include <glm/glm.hpp>
 #include <vector>
+#include <algorithm>
 
 #include "3DUIPluginAbstractions.h"
 
@@ -24,11 +25,17 @@ public:
     bool getShowLeadStress() { return showLeadStress; }
     glm::mat4 getDataToBentoMat() { return dataToBento; }
     
+    void setDataToBentoMat(const glm::mat4 &m) { dataToBento = m; }
+    
 private:
     bool showFlow;
     bool showWallStress;
     bool showLeadStress;
     glm::mat4 dataToBento;
+    // voi = "volume of interest"
+    std::vector<glm::vec3> voiPoints;
+    std::vector<float> voiRads;
+    std::vector<glm::vec3> voiColors; // for highlighting inside the vol
 };
 
 
@@ -87,7 +94,28 @@ public:
     int getNumViewSettings() { return _viewSettings.size();}
     IBentoViewSettings & getViewSettings(int viewID) { return _viewSettings.at(viewID);}
     
+    // parameters come from a VOI sphere defined interactively in a particular row, col.
+    // the view settings are copied from that box and a new transformation is applied
+    // to create a subvolume based on the point and radius
+    void addNewViewRow(int r, int c, glm::vec3 selectionPt, float selectionRad);
+    
     std::vector<float> getCriticalTimes() { return _criticalTimes; }
+    
+    bool isSelected(int r, int c) {
+        glm::ivec2 test(r,c);
+        std::vector<glm::ivec2>::iterator it = std::find(_selected.begin(), _selected.end(), test);
+        return (it != _selected.end());
+    }
+    
+    std::vector<glm::ivec2> getSelected() { return _selected; }
+    
+    void clearSelected() { _selected.clear(); }
+    
+    void addToSelected(int r, int c) { _selected.push_back(glm::ivec2(r,c)); }
+    
+    void removeFromSelected(int r, int c) {
+        _selected.erase(std::remove(_selected.begin(), _selected.end(), glm::ivec2(r,c)), _selected.end());
+    }
     
 private:
 
@@ -119,6 +147,7 @@ private:
     glm::mat4 _transMat;
     Transition *_transition;
     float _lastSysTime;
+    std::vector<glm::ivec2> _selected;
 };
 
 

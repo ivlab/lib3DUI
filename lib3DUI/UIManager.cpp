@@ -23,6 +23,7 @@ UIManager::UIManager(BentoBoxWidget *bento) :
 
     _currentState = _bothOutsideVol;
     _currentStateID = UIState::STATE_BOTHOUTSIDE;
+    resetVOISphere();
 }
 
 
@@ -83,6 +84,9 @@ void UIManager::rhandTrackerMove(glm::mat4 transform) {
         _currentState->rhandTrackerMove(transform);
     }
     _rhandMat = transform;
+    if (!_voiSphereLocked) {
+        _voiSphereMat = _rhandMat;
+    }
 }
 
 
@@ -143,14 +147,6 @@ void UIManagerRenderer::draw(glm::mat4 viewMatrix, glm::mat4 projMatrix) {
         glm::mat4 lM = _mgr->_lhandMat * S;
         _quickShapes->drawCube(glm::value_ptr(lM), glm::value_ptr(viewMatrix), glm::value_ptr(projMatrix), lcol);
     }
-    else if (_mgr->_lhandCursorType == _mgr->CURSOR_SPHERE) {
-        glm::mat4 S = glm::mat4(1.0);
-        S[0].x = 0.1;
-        S[1].y = 0.1;
-        S[2].z = 0.1;
-        glm::mat4 lM = _mgr->_lhandMat * S;
-        _quickShapes->drawSphere(glm::value_ptr(lM), glm::value_ptr(viewMatrix), glm::value_ptr(projMatrix), lcol);
-    }
     else if (_mgr->_lhandCursorType == _mgr->CURSOR_LASER) {
         glm::mat4 S = glm::mat4(1.0);
         S[0].x = 0.03;
@@ -175,12 +171,12 @@ void UIManagerRenderer::draw(glm::mat4 viewMatrix, glm::mat4 projMatrix) {
         glm::mat4 rM = _mgr->_rhandMat * S;
         _quickShapes->drawCube(glm::value_ptr(rM), glm::value_ptr(viewMatrix), glm::value_ptr(projMatrix), rcol);
     }
-    else if (_mgr->_rhandCursorType == _mgr->CURSOR_SPHERE) {
+    else if (_mgr->_rhandCursorType == _mgr->CURSOR_VOISPHERE) {
         glm::mat4 S = glm::mat4(1.0);
-        S[0].x = 0.1;
-        S[1].y = 0.1;
-        S[2].z = 0.1;
-        glm::mat4 rM = _mgr->_rhandMat * S;
+        S[0].x = _mgr->_voiSphereRad/2.0;
+        S[1].y = _mgr->_voiSphereRad/2.0;
+        S[2].z = _mgr->_voiSphereRad/2.0;
+        glm::mat4 rM = _mgr->_voiSphereMat * S;
         _quickShapes->drawSphere(glm::value_ptr(rM), glm::value_ptr(viewMatrix), glm::value_ptr(projMatrix), rcol);
     }
     else if (_mgr->_rhandCursorType == _mgr->CURSOR_LASER) {

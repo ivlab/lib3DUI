@@ -21,8 +21,7 @@ BentoBoxWidget::BentoBoxWidget(int numInstances, glm::mat4 bentoToWorld,
     // Each row has its own view settings.  We'll start with just one row, so
     // initialize the array with one instance of the default settings.
     _viewSettings.push_back(BentoViewSettings());
-    _viewSettings.push_back(BentoViewSettings());
-    _viewSettings.push_back(BentoViewSettings());
+
     
     // Each colum will display one or more timesteps.
     // Intitialize to always display the very first timestep
@@ -70,8 +69,14 @@ void BentoBoxWidget::animate(float currentSysTime) {
 glm::vec3 BentoBoxWidget::centerOfBox(int r, int c) {
     int nrows = _viewSettings.size();
     int ncols = _numInstances * _criticalTimes.size();
-    float rfloat = ((float)r/(float)(nrows-1) - 0.5) * (float)(nrows-1);
-    float cfloat = ((float)c/(float)(ncols-1) - 0.5) * (float)(ncols-1);
+    float rfloat = 0.0;
+    if (nrows > 1) {
+        rfloat = ((float)r/(float)(nrows-1) - 0.5) * (float)(nrows-1);
+    }
+    float cfloat = 0.0;
+    if (ncols > 1) {
+        cfloat = ((float)c/(float)(ncols-1) - 0.5) * (float)(ncols-1);
+    }
     return glm::vec3(cfloat, 0.0, rfloat);
 }
 
@@ -102,6 +107,8 @@ void BentoBoxWidget::transitionToView(int minRow, int minCol, int maxRow, int ma
     float sw = _maxViewWidth / (float)(maxCol - minCol + 1);
     float sh = _maxViewHeight / (float)(maxRow - minRow + 1);
     float newScale = glm::min(sw, sh);
+    
+    std::cout << newScale << std::endl;
     
     _transition = new Transition(_lastSysTime, _scaleMat[0].x, glm::vec3(_transMat[3]),
                                  _lastSysTime + 1.5, newScale, newTrans);
@@ -137,6 +144,18 @@ bool BentoBoxWidget::insideSubVolume(const glm::vec3 &testPt, int *hitRow, int *
 
 
 
+void BentoBoxWidget::addNewViewRow(int r, int c, glm::vec3 selectionPt, float selectionRad) {
+    
+    glm::vec3 ptInVolSpace = selectionPt - centerOfBox(r,c);
+    float radInVolSpace = selectionRad / _scaleMat[0].x;
+    
+    BentoViewSettings settings = _viewSettings[r];
+    glm::mat4 M = glm::scale(glm::mat4(1.0), glm::vec3(1.0f/radInVolSpace, 1.0f/radInVolSpace, 1.0f/radInVolSpace)) *
+                  glm::translate(glm::mat4(1.0), -ptInVolSpace);
+    settings.setDataToBentoMat(M);
+    _viewSettings.push_back(settings);
+}
+
 
 
 
@@ -161,7 +180,8 @@ void BentoBoxWidgetRenderer::draw(glm::mat4 viewMatrix, glm::mat4 projMatrix) {
     glm::mat4 xform = _bento->_toWorld * _bento->_scaleMat * _bento->_transMat;
     
     // Draw cubbies
-    float col[3] = {1.0, 1.0, 1.0};
+    float basecol[3] = {0.5, 0.5, 0.5};
+    float highcol[3] = {1.0, 1.0, 0.76};
     glm::mat4 S = glm::mat4(1.0);
     S[0].x = 0.5;
     S[1].y = 0.125;
@@ -170,12 +190,20 @@ void BentoBoxWidgetRenderer::draw(glm::mat4 viewMatrix, glm::mat4 projMatrix) {
     int nrows = _bento->_viewSettings.size();
     int ncols = _bento->_numInstances * _bento->_criticalTimes.size();
     
+    //std::cout << nrows << " " << ncols << std::endl;
+    
     for (int r = 0; r < nrows; r++) {
         for (int c = 0; c < ncols; c++) {
+            //std::cout << r << " " << c << std::endl;
             glm::vec3 ctr = _bento->centerOfBox(r,c);
             ctr.y = -0.35;
             glm::mat4 M = xform * glm::translate(glm::mat4(1.0), ctr) * S;
-            _quickShapes->drawCubbie(glm::value_ptr(M), glm::value_ptr(viewMatrix), glm::value_ptr(projMatrix), col);
+            if (_bento->isSelected(r,c)) {
+                _quickShapes->drawCubbie(glm::value_ptr(M), glm::value_ptr(viewMatrix), glm::value_ptr(projMatrix), highcol);
+            }
+            else {
+                _quickShapes->drawCubbie(glm::value_ptr(M), glm::value_ptr(viewMatrix), glm::value_ptr(projMatrix), basecol);
+            }
         }
     }
     

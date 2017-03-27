@@ -69,9 +69,9 @@ public:
         
         // Draw the "data" for this instance, timestep, and settings:
         glm::mat4 S = glm::mat4(1.0);
-        S[0].x = 0.2;
-        S[1].y = 0.2;
-        S[2].z = 0.2;
+        S[0].x = 0.02;
+        S[1].y = 0.02;
+        S[2].z = 0.02;
         float col1[3] = {1.0, 0.7, 0.8};
         QS.drawCube(glm::value_ptr(M * glm::translate(glm::mat4(1.0), glm::vec3(-0.3,0,0)) * S),
                               glm::value_ptr(viewMatrix), glm::value_ptr(projMatrix), col1);

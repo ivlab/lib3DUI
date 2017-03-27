@@ -26,7 +26,7 @@ void BothOutsideVol::enterState(STATE_ID fromState) {
 
 void BothOutsideVol::exitState() {
 }
-    
+
 void BothOutsideVol::lhandTrackerMove(glm::mat4 transform) {
     glm::vec3 posInBentoFrame = glm::inverse(_bento->getSubVolumesToWorldMat()) * transform[3];
     int row, col;
@@ -66,6 +66,8 @@ void BothOutsideVol::rhandTrackerMove(glm::mat4 transform) {
     glm::vec3 posInBentoFrame = glm::inverse(_bento->getSubVolumesToWorldMat()) * transform[3];
     int row, col;
     if (_bento->insideSubVolume(posInBentoFrame, &row, &col)) {
+        _bento->clearSelected();
+        _bento->addToSelected(row, col);
         _uiMgr->setState(STATE_DHINSIDE);
     }
 }
@@ -109,7 +111,7 @@ void BothOutsideVol::rhandBtnUp() {
 // -----------------  STATE:  DH INSIDE  -----------------
 
 DHInsideVol::DHInsideVol(UIManager *uiMgr, BentoBoxWidget *bento) :
-    UIState(uiMgr,bento), _grabbing(false)
+    UIState(uiMgr,bento)
 {
 }
 
@@ -119,9 +121,11 @@ DHInsideVol::~DHInsideVol() {
 
 void DHInsideVol::enterState(STATE_ID fromState) {
     std::cout << "ENTER STATE: DHInside" << std::endl;
+    _uiMgr->setRHCursor(UIManager::CURSOR_VOISPHERE);
 }
 
 void DHInsideVol::exitState() {
+    _uiMgr->setRHCursor(UIManager::CURSOR_LASER);
 }
 
 
@@ -147,17 +151,28 @@ void DHInsideVol::rhandTrackerMove(glm::mat4 transform) {
     glm::vec3 posInBentoFrame = glm::inverse(_bento->getSubVolumesToWorldMat()) * transform[3];
     int row, col;
     if (!_bento->insideSubVolume(posInBentoFrame, &row, &col)) {
+        _bento->clearSelected();
         _uiMgr->setState(STATE_BOTHOUTSIDE);
     }
 }
 
 void DHInsideVol::rhandBtnDown() {
+    _uiMgr->lockVOISpherePos();
+    _spherePt = glm::inverse(_bento->getSubVolumesToWorldMat()) * _uiMgr->getRHandMat()[3];
 }
 
 void DHInsideVol::rhandTrackerDrag(glm::mat4 transform) {
+    glm::vec3 curPt = glm::inverse(_bento->getSubVolumesToWorldMat()) * transform[3];
+    _sphereRad = glm::length(curPt - _spherePt);
+    _uiMgr->setVOISphereRad(_sphereRad);
 }
 
 void DHInsideVol::rhandBtnUp() {
+    glm::ivec2 rc = _bento->getSelected()[0];
+    _bento->addNewViewRow(rc[0], rc[1], _spherePt, _sphereRad);
+    _uiMgr->resetVOISphere();
+    _bento->clearSelected();
+    _uiMgr->setState(STATE_BOTHOUTSIDE);
 }
 
 
@@ -165,7 +180,7 @@ void DHInsideVol::rhandBtnUp() {
 // -----------------  STATE:  NDH INSIDE  -----------------
 
 NDHInsideVol::NDHInsideVol(UIManager *uiMgr, BentoBoxWidget *bento) :
-UIState(uiMgr,bento), _grabbing(false)
+    UIState(uiMgr,bento)
 {
 }
 
@@ -185,6 +200,7 @@ void NDHInsideVol::lhandTrackerMove(glm::mat4 transform) {
     glm::vec3 posInBentoFrame = glm::inverse(_bento->getSubVolumesToWorldMat()) * transform[3];
     int row, col;
     if (!_bento->insideSubVolume(posInBentoFrame, &row, &col)) {
+        _bento->clearSelected();
         _uiMgr->setState(STATE_BOTHOUTSIDE);
     }
 }
@@ -203,6 +219,8 @@ void NDHInsideVol::rhandTrackerMove(glm::mat4 transform) {
     glm::vec3 posInBentoFrame = glm::inverse(_bento->getSubVolumesToWorldMat()) * transform[3];
     int row, col;
     if (_bento->insideSubVolume(posInBentoFrame, &row, &col)) {
+        _bento->clearSelected();
+        _bento->addToSelected(row, col);
         _uiMgr->setState(STATE_BOTHINSIDE);
     }
 }
@@ -222,7 +240,7 @@ void NDHInsideVol::rhandBtnUp() {
 // -----------------  STATE:  BOTH HANDS INSIDE  -----------------
 
 BothInsideVol::BothInsideVol(UIManager *uiMgr, BentoBoxWidget *bento) :
-UIState(uiMgr,bento), _grabbing(false)
+    UIState(uiMgr,bento)
 {
 }
 
@@ -232,9 +250,11 @@ BothInsideVol::~BothInsideVol() {
 
 void BothInsideVol::enterState(STATE_ID fromState) {
     std::cout << "ENTER STATE: BothInside" << std::endl;
+    _uiMgr->setRHCursor(UIManager::CURSOR_VOISPHERE);
 }
 
 void BothInsideVol::exitState() {
+    _uiMgr->setRHCursor(UIManager::CURSOR_LASER);
 }
 
 
@@ -260,16 +280,27 @@ void BothInsideVol::rhandTrackerMove(glm::mat4 transform) {
     glm::vec3 posInBentoFrame = glm::inverse(_bento->getSubVolumesToWorldMat()) * transform[3];
     int row, col;
     if (!_bento->insideSubVolume(posInBentoFrame, &row, &col)) {
+        _bento->removeFromSelected(row, col);
         _uiMgr->setState(STATE_NDHINSIDE);
     }
 }
 
 void BothInsideVol::rhandBtnDown() {
+    _uiMgr->lockVOISpherePos();
+    _spherePt = glm::inverse(_bento->getSubVolumesToWorldMat()) * _uiMgr->getRHandMat()[3];
 }
 
 void BothInsideVol::rhandTrackerDrag(glm::mat4 transform) {
+    glm::vec3 curPt = glm::inverse(_bento->getSubVolumesToWorldMat()) * transform[3];
+    _sphereRad = glm::length(curPt - _spherePt);
+    _uiMgr->setVOISphereRad(_sphereRad);
 }
 
 void BothInsideVol::rhandBtnUp() {
+    glm::ivec2 rc = _bento->getSelected()[0];
+    _bento->addNewViewRow(rc[0], rc[1], _spherePt, _sphereRad);
+    _uiMgr->resetVOISphere();
+    _bento->clearSelected();
+    _uiMgr->setState(STATE_BOTHOUTSIDE);
 }
 

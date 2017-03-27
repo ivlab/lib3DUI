@@ -16,7 +16,7 @@ public:
 
     enum CURSOR_TYPE {
         CURSOR_LASER = 0,
-        CURSOR_SPHERE = 1,
+        CURSOR_VOISPHERE = 1,
         CURSOR_CUBE = 2
     };
     
@@ -48,6 +48,19 @@ public:
     glm::mat4 getLHandMat() { return _lhandMat; }
     
     glm::mat4 getRHandMat() { return _rhandMat; }
+
+    void lockVOISpherePos() {
+        _voiSphereLocked = true;
+        _voiSphereMat = _rhandMat;
+    }
+    void setVOISphereRad(float r) { _voiSphereRad = r; }
+    void resetVOISphere() {
+        _voiSphereRad = 0.05;
+        _voiSphereLocked = false;
+    }
+    
+    void setLHCursor(CURSOR_TYPE t) { _lhandCursorType = t; }
+    void setRHCursor(CURSOR_TYPE t) { _rhandCursorType = t; }
     
 private:
     
@@ -66,6 +79,10 @@ private:
     
     glm::mat4 _lhandMat;
     glm::mat4 _rhandMat;
+
+    float _voiSphereRad;
+    bool _voiSphereLocked;
+    glm::mat4 _voiSphereMat;
 };
 
 
